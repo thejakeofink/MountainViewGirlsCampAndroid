@@ -85,20 +85,4 @@ public class FlickrManager {
         }
     }
 
-
-
-
-
-//            Pair<String, FlickrPhoto>, Object, Bitmap> {
-//
-//        String photoURL;
-//
-//        @Override
-//        protected FlickrPhoto doInBackground(Pair<String, FlickrPhoto>[] params) {
-//
-//            photoURL = flickrPhotoURLForFlickrPhoto(params[0].second, params[0].first);
-//
-//            return new FlickrPhoto();
-//        }
-//    }
 }
