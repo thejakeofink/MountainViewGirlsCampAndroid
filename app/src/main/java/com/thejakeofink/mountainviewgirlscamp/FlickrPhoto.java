@@ -4,7 +4,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 /**
- * Created by jstokes on 8/26/14.
+ * Created by Jacob Stokes on 8/26/14.
  */
 public class FlickrPhoto {
     public ImageButton thumbnail;

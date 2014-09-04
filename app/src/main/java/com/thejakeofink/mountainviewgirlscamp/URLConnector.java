@@ -13,7 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by jstokes on 8/27/14.
+ * Created by Jacob Stokes on 8/27/14.
  */
 public class URLConnector {
 
