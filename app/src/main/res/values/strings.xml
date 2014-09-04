@@ -4,5 +4,11 @@
     <string name="app_name">Mountain View Girls Camp</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_initial_page">InitialPageActivity</string>
+
+    // Initial page
+    <string name="study_guides">Study Guides</string>
+    <string name="pictures">Pictures</string>
+    <string name="quotes">Quotes</string>
 
 </resources>
