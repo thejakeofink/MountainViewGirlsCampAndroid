@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.thejakeofink.mountainviewgirlscamp" >
+    package="com.thejakeofink.mountainviewgirlscamp">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -8,14 +8,13 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".FlickrPhotoAlbumActivity"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name=".InitialPageActivity"
-            android:label="@string/title_activity_initial_page" >
+            android:label="@string/title_activity_initial_page">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +23,7 @@
         </activity>
         <activity
             android:name=".PhotoAlbumActivity"
-            android:label="@string/title_activity_photo_album" >
-        </activity>
+            android:label="@string/title_activity_photo_album"></activity>
     </application>
 
 </manifest>

@@ -54,6 +54,8 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
         albumGridView.setOnItemClickListener(this);
 
         loadAlbums();
+
+        getActionBar().setTitle(R.string.photo_albums);
     }
 
     public void loadAlbums() {
@@ -109,8 +111,6 @@ class AlbumAdapter extends BaseAdapter {
             LayoutInflater inflater = activity.getLayoutInflater();
             v = inflater.inflate(R.layout.grid_item_layout, parent,false);
         }
-
-        Log.v(TAG, "Did we hit this code?");
 
         ((TextView)v.findViewById(R.id.txv_grid_item)).setText(albumIdsTitles.get(position).second);
 

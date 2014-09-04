@@ -3,27 +3,63 @@ package com.thejakeofink.mountainviewgirlscamp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 
 public class PhotoAlbumActivity extends Activity {
-
+    private static final String TAG = "PhotoAlbumActivity";
     public static final String PHOTOSET_ID = "photosetID";
+    public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 0;
+
+    PhotoAdapter photoAdapter;
+    GridView photoGridView;
+
+    public Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case MESSAGE_UPDATE_FLICKR_PHOTOS:
+                    ArrayList<FlickrPhoto> thePhotos = (ArrayList<FlickrPhoto>) message.obj;
+                    Log.v(TAG, "We got our albums " + thePhotos);
+                    photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
+                    photoGridView.setAdapter(photoAdapter);
+                    photoAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_album);
 
+        photoGridView = (GridView) findViewById(R.id.photo_grid_view);
+
         Intent intent = getIntent();
 
         if (intent.getExtras() != null) {
-            ((TextView) findViewById(R.id.txv_tempid)).setText(intent.getExtras().getString(PHOTOSET_ID));
+            loadPhotosForPhotoset(intent.getExtras().getString(PHOTOSET_ID));
         }
     }
 
+    private void loadPhotosForPhotoset(String albumID) {
+        FlickrManager.RetrievePhotosTask retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID);
+        retrievePhotosTask.execute();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -43,5 +79,50 @@ public class PhotoAlbumActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+}
+
+class PhotoAdapter extends BaseAdapter {
+
+    private static String TAG = "AlbumAdapter";
+
+    ArrayList<FlickrPhoto> flickrPhotos;
+    Activity activity;
+
+    public PhotoAdapter(Activity a) {
+        flickrPhotos = new ArrayList<FlickrPhoto>();
+        activity = a;
+    }
+
+    public PhotoAdapter(ArrayList<FlickrPhoto> photos, Activity a) {
+        flickrPhotos = photos;
+        activity = a;
+    }
+
+    @Override
+    public int getCount() {
+        return flickrPhotos.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return flickrPhotos.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return flickrPhotos.get(position).photoID;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        View v = convertView;
+        if (v == null) {
+            // Need to create a view
+            LayoutInflater inflater = activity.getLayoutInflater();
+            v = inflater.inflate(R.layout.grid_item_layout, parent,false);
+        }
+
+        return v;
     }
 }

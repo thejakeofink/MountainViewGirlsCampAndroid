@@ -51,6 +51,8 @@ public class FlickrManager {
             ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
             String json = baos.toString();
 
+            //TODO: get all the photooooooos!
+
             return null;
         }
     };
@@ -107,7 +109,6 @@ public class FlickrManager {
         protected ArrayList<Pair<String, String>> doInBackground(Object[] params) {
             ByteArrayOutputStream baos = URLConnector.readBytes(listURL);
             String json = baos.toString();
-            Log.v(TAG, json);
             ArrayList<Pair<String,String>> albums = new ArrayList<Pair<String, String>>();
             try {
                 JSONObject root = new JSONObject(json);
@@ -115,10 +116,8 @@ public class FlickrManager {
                 String status = root.getString("stat");
                 if (status.equals("ok")) {
                     JSONObject rootContent = root.getJSONObject("photosets");
-                    Log.v(TAG, rootContent.toString());
 
                     JSONArray photosets = rootContent.getJSONArray("photoset");
-                    Log.v(TAG, photosets.toString());
 
                     for (int i = 0; i < photosets.length(); i++) {
                         JSONObject tempObj = photosets.getJSONObject(i);
