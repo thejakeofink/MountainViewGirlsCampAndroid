@@ -31,14 +31,12 @@ public class FlickrManager {
         return flickrPreString + "method=flickr.photosets.getList&api_key=" + flickrAPIKey + "&user_id=" + userID + "&format=json&nojsoncallback=1";
     }
 
-    public class SearchFlickrForSets extends AsyncTask<Object, Object, ArrayList<Pair<String, String>>> {
+    public class SearchFlickrForSetsTask extends AsyncTask<Object, Object, ArrayList<Pair<String, String>>> {
 
         String listURL;
 
-        @Override
-        protected void onPreExecute() {
+        public SearchFlickrForSetsTask() {
             listURL = flickrListURLForAccount();
-            super.onPreExecute();
         }
 
         @Override
@@ -80,6 +78,27 @@ public class FlickrManager {
         protected Bitmap doInBackground(Object... params) {
             ByteArrayOutputStream baos = URLConnector.readBytes(photoURL);
             String json = baos.toString();
+
+            return null;
+        }
+    }
+
+    public class LoadImagesForPhotos extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
+
+        ArrayList<FlickrPhoto> photosToShare;
+
+        public LoadImagesForPhotos(ArrayList<FlickrPhoto> photos) {
+            photosToShare = photos;
+        }
+
+        @Override
+        protected ArrayList<FlickrPhoto> doInBackground(Object... params) {
+            for (FlickrPhoto p : photosToShare) {
+
+                String photoURL = flickrPhotoURLForFlickrPhoto(p, "b");
+                ByteArrayOutputStream baos = URLConnector.readBytes(photoURL);
+                String json = baos.toString();
+            }
 
             return null;
         }
