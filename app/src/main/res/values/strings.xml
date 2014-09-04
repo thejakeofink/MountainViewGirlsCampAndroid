@@ -5,10 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_share">Share</string>
     <string name="title_activity_initial_page">InitialPageActivity</string>
-
-    // Initial page
-    <string name="study_guides">Study Guides</string>
+    // Initial page    <string name="study_guides">Study Guides</string>
     <string name="pictures">Pictures</string>
     <string name="quotes">Quotes</string>
+    <string name="title_activity_photo_album">PhotoAlbumActivity</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

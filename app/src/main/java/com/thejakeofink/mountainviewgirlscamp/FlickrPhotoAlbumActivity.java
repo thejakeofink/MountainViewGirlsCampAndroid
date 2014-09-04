@@ -2,6 +2,7 @@ package com.thejakeofink.mountainviewgirlscamp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -19,7 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class FlickrPhotoAlbumActivity extends Activity {
+public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener {
     private static final String TAG = "FlickrPhotoAlbumActivity";
     public static final int MESSAGE_UPDATE_FLICKR_ALBUMS = 0;
 
@@ -49,6 +51,8 @@ public class FlickrPhotoAlbumActivity extends Activity {
 
         albumGridView = (GridView) findViewById(R.id.album_photo_grid);
 
+        albumGridView.setOnItemClickListener(this);
+
         loadAlbums();
     }
 
@@ -57,24 +61,11 @@ public class FlickrPhotoAlbumActivity extends Activity {
         getFlickrAlbumsTask.execute();
     }
 
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.flickr_photo_album, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent weakActivity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_share) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent photoAlbumIntent = new Intent(this, PhotoAlbumActivity.class);
+        photoAlbumIntent.putExtra(PhotoAlbumActivity.PHOTOSET_ID, "" + id);
+        startActivity(photoAlbumIntent);
     }
 }
 
