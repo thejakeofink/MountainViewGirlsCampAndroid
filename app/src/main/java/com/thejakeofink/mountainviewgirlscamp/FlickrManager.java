@@ -46,20 +46,27 @@ public class FlickrManager {
 
     public static class RetrievePhotosTask extends AsyncTask<Object, ArrayList<FlickrPhoto>, ArrayList<FlickrPhoto>> {
         private static final String TAG = "RetrievePhotosTask";
+        private static boolean failFast = false;
         String photosURL;
         String albumTitle = "";
         WeakReference<PhotoAlbumActivity> weakActivity;
 
+        public void destroy() {
+            failFast = true;
+        }
+
         public RetrievePhotosTask(String setID, PhotoAlbumActivity photoAlbumActivity) {
             photosURL = flickrURLForPhotoSet(setID);
             weakActivity = new WeakReference<PhotoAlbumActivity>(photoAlbumActivity);
+            failFast = false;
         }
 
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object[] params) {
+            ArrayList<FlickrPhoto> albumPhotos = new ArrayList<FlickrPhoto>();
+            if (failFast) return albumPhotos;
             ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
             String json = baos.toString();
-            ArrayList<FlickrPhoto> albumPhotos = new ArrayList<FlickrPhoto>();
 
             try {
                 JSONObject root = new JSONObject(json);
@@ -73,7 +80,7 @@ public class FlickrManager {
 
                     JSONArray photos = photoset.getJSONArray("photo");
 
-                    for (int i = 0; i < photos.length(); i++) {
+                    for (int i = 0; i < photos.length() && !failFast; i++) {
                         JSONObject jsonPhoto = photos.getJSONObject(i);
                         FlickrPhoto flickrPhoto = new FlickrPhoto();
                         flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
@@ -97,6 +104,7 @@ public class FlickrManager {
 
         @Override
         protected void onProgressUpdate(ArrayList<FlickrPhoto>... values) {
+            if (failFast) return;
             Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, values[0]);
             PhotoAlbumActivity currentActivity = weakActivity.get();
             if (currentActivity != null) {
@@ -107,6 +115,7 @@ public class FlickrManager {
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
+            if (failFast) return;
             Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
             PhotoAlbumActivity currentActivity = weakActivity.get();
             if (currentActivity != null) {

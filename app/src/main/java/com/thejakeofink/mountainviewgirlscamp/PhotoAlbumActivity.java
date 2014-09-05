@@ -27,6 +27,7 @@ public class PhotoAlbumActivity extends Activity {
 
     PhotoAdapter photoAdapter;
     GridView photoGridView;
+    FlickrManager.RetrievePhotosTask retrievePhotosTask;
 
     public Handler mHandler = new Handler() {
         @Override
@@ -59,17 +60,27 @@ public class PhotoAlbumActivity extends Activity {
 
         photoGridView = (GridView) findViewById(R.id.photo_grid_view);
 
-        Intent intent = getIntent();
+        Bundle bundle = getIntent().getExtras();
 
         getActionBar().setTitle("");
 
-        if (intent.getExtras() != null) {
-            loadPhotosForPhotoset(intent.getExtras().getString(PHOTOSET_ID));
+        if (bundle != null && bundle.containsKey(PHOTOSET_ID)) {
+            loadPhotosForPhotoset(bundle.getString(PHOTOSET_ID));
+        } else {
+            Log.wtf(TAG, "WE HAVE A PROBLEM WITH TEH BUNDLES!!!!!!!!");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (retrievePhotosTask != null) {
+            retrievePhotosTask.destroy();
         }
     }
 
     private void loadPhotosForPhotoset(String albumID) {
-        FlickrManager.RetrievePhotosTask retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID, this);
+        retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID, this);
         retrievePhotosTask.execute();
     }
 
