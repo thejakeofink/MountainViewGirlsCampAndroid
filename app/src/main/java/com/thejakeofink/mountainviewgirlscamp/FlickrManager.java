@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Message;
+import android.util.Log;
 import android.util.Pair;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
  * Created by Jacob Stokes on 8/26/14.
  */
 public class FlickrManager {
+    public static final String TAG = "FlickrManager";
     public static String flickrAPIKey = "f3b34fa4324967a8e889ae3c815c84a9";
     public static String userID = "125836065@N02";
     public static String flickrPreString = "https://api.flickr.com/services/rest/?";
@@ -42,7 +44,7 @@ public class FlickrManager {
 
 
 
-    public static class RetrievePhotosTask extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
+    public static class RetrievePhotosTask extends AsyncTask<Object, ArrayList<FlickrPhoto>, ArrayList<FlickrPhoto>> {
         private static final String TAG = "RetrievePhotosTask";
         String photosURL;
         String albumTitle = "";
@@ -80,14 +82,23 @@ public class FlickrManager {
                         flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
                         flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
                         albumPhotos.add(flickrPhoto);
+                        publishProgress(albumPhotos);
                     }
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
 
             return albumPhotos;
+        }
+
+        @Override
+        protected void onProgressUpdate(ArrayList<FlickrPhoto>... values) {
+            Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, values[0]);
+            PhotoAlbumActivity currentActivity = weakActivity.get();
+            Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+            currentActivity.mHandler.sendMessage(message);
         }
 
         @Override
@@ -113,7 +124,7 @@ public class FlickrManager {
             bis.close();
             is.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "loadImageForPhoto our error is: " + e.getMessage());
         }
         return bm;
     }
