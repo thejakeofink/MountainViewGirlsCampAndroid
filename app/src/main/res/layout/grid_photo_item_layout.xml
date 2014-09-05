@@ -9,12 +9,25 @@
     android:paddingBottom="@dimen/photo_bottom_margin"
     android:paddingLeft="@dimen/photo_top_margin"
     android:paddingRight="@dimen/photo_top_margin"
-    android:paddingTop="@dimen/photo_top_margin" >
+    android:paddingTop="@dimen/photo_top_margin">
 
-    <ImageView
-        android:id="@+id/imgv_grid_item"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/imgv_grid_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/pushpin"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 
 </LinearLayout>

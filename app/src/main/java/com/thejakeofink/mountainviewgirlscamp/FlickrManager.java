@@ -82,7 +82,9 @@ public class FlickrManager {
                         flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
                         flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
                         albumPhotos.add(flickrPhoto);
-                        publishProgress(albumPhotos);
+                        if (i % 5 == 0) {
+                            publishProgress(albumPhotos);
+                        }
                     }
                 }
 
@@ -97,16 +99,20 @@ public class FlickrManager {
         protected void onProgressUpdate(ArrayList<FlickrPhoto>... values) {
             Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, values[0]);
             PhotoAlbumActivity currentActivity = weakActivity.get();
-            Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
-            currentActivity.mHandler.sendMessage(message);
+            if (currentActivity != null) {
+                Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+                currentActivity.mHandler.sendMessage(message);
+            }
         }
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
             Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
             PhotoAlbumActivity currentActivity = weakActivity.get();
-            Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
-            currentActivity.mHandler.sendMessage(message);
+            if (currentActivity != null) {
+                Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+                currentActivity.mHandler.sendMessage(message);
+            }
         }
     };
 
@@ -194,8 +200,10 @@ public class FlickrManager {
         @Override
         protected void onPostExecute(ArrayList<Pair<String, String>> pairs) {
             FlickrPhotoAlbumActivity currentActivity = weakActivity.get();
-            Message message = currentActivity.mHandler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, pairs);
-            currentActivity.mHandler.sendMessage(message);
+            if (currentActivity != null) {
+                Message message = currentActivity.mHandler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, pairs);
+                currentActivity.mHandler.sendMessage(message);
+            }
         }
     };
 

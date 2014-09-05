@@ -36,9 +36,16 @@ public class PhotoAlbumActivity extends Activity {
                     Pair<String, ArrayList<FlickrPhoto>> titlePhotos = (Pair<String, ArrayList<FlickrPhoto>>) message.obj;
                     ArrayList<FlickrPhoto> thePhotos = titlePhotos.second;
                     String title = titlePhotos.first;
-                    PhotoAlbumActivity.this.getActionBar().setTitle(title);
-                    photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
-                    photoGridView.setAdapter(photoAdapter);
+                    if (PhotoAlbumActivity.this.getActionBar().getTitle().equals("")) {
+                        PhotoAlbumActivity.this.getActionBar().setTitle(title);
+                    }
+                    if (photoAdapter != null) {
+                        photoAdapter.clear();
+                        photoAdapter.refill(thePhotos);
+                    } else {
+                        photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
+                        photoGridView.setAdapter(photoAdapter);
+                    }
                     photoAdapter.notifyDataSetChanged();
                     break;
             }
@@ -100,8 +107,18 @@ class PhotoAdapter extends BaseAdapter {
     }
 
     public PhotoAdapter(ArrayList<FlickrPhoto> photos, Activity a) {
-        flickrPhotos = photos;
+        flickrPhotos = (ArrayList<FlickrPhoto>) photos.clone();
         activity = a;
+    }
+
+    public void clear() {
+        flickrPhotos.clear();
+    }
+
+    public void refill(ArrayList<FlickrPhoto> photos) {
+        for (FlickrPhoto p : photos) {
+            flickrPhotos.add(p);
+        }
     }
 
     @Override

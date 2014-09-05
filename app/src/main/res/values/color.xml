@@ -3,5 +3,5 @@
     <color name="list_select">@android:color/white</color>
     <color name="list_divider">@android:color/white</color>
     <color name="list_select_white">@android:color/darker_gray</color>
-    <color name="list_divider_white">@android:color/black</color>
+    <color name="list_divider_white">@android:color/transparent</color>
 </resources>
