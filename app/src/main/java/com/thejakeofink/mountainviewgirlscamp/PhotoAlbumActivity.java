@@ -1,5 +1,6 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,15 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class PhotoAlbumActivity extends Activity {
+public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener {
     private static final String TAG = "PhotoAlbumActivity";
     public static final String PHOTOSET_ID = "photosetID";
     public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 0;
@@ -28,6 +30,7 @@ public class PhotoAlbumActivity extends Activity {
     PhotoAdapter photoAdapter;
     GridView photoGridView;
     FlickrManager.RetrievePhotosTask retrievePhotosTask;
+    ActionBar actionBar;
 
     public Handler mHandler = new Handler() {
         @Override
@@ -37,8 +40,8 @@ public class PhotoAlbumActivity extends Activity {
                     Pair<String, ArrayList<FlickrPhoto>> titlePhotos = (Pair<String, ArrayList<FlickrPhoto>>) message.obj;
                     ArrayList<FlickrPhoto> thePhotos = titlePhotos.second;
                     String title = titlePhotos.first;
-                    if (PhotoAlbumActivity.this.getActionBar().getTitle().equals("")) {
-                        PhotoAlbumActivity.this.getActionBar().setTitle(title);
+                    if (actionBar != null && actionBar.getTitle().equals("")) {
+                        actionBar.setTitle(title);
                     }
                     if (photoAdapter != null) {
                         photoAdapter.clear();
@@ -46,6 +49,7 @@ public class PhotoAlbumActivity extends Activity {
                     } else {
                         photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
                         photoGridView.setAdapter(photoAdapter);
+                        photoGridView.setOnItemClickListener(PhotoAlbumActivity.this);
                     }
                     photoAdapter.notifyDataSetChanged();
                     break;
@@ -62,7 +66,10 @@ public class PhotoAlbumActivity extends Activity {
 
         Bundle bundle = getIntent().getExtras();
 
-        getActionBar().setTitle("");
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("");
+        }
 
         if (bundle != null && bundle.containsKey(PHOTOSET_ID)) {
             loadPhotosForPhotoset(bundle.getString(PHOTOSET_ID));
@@ -102,6 +109,14 @@ public class PhotoAlbumActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FlickrPhoto photoForBundle = (FlickrPhoto)photoAdapter.getItem(position);
+        Intent photoIntent = new Intent(this, PhotoActivity.class);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO, (Serializable) photoForBundle);
+        startActivity(photoIntent);
     }
 }
 
