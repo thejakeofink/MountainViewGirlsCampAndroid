@@ -33,7 +33,6 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
             switch (message.what) {
                 case MESSAGE_UPDATE_FLICKR_ALBUMS:
                     ArrayList<Pair<String, String>> thealbums = (ArrayList<Pair<String, String>>) message.obj;
-                    Log.v(TAG, "We got our albums " + thealbums);
                     albumAdapter = new AlbumAdapter(thealbums, FlickrPhotoAlbumActivity.this);
                     albumGridView.setAdapter(albumAdapter);
                     albumAdapter.notifyDataSetChanged();

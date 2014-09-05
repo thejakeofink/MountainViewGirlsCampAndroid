@@ -1,16 +1,20 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Message;
-import android.util.Log;
 import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -39,39 +43,79 @@ public class FlickrManager {
 
 
     public static class RetrievePhotosTask extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
-
+        private static final String TAG = "RetrievePhotosTask";
         String photosURL;
+        String albumTitle = "";
+        WeakReference<PhotoAlbumActivity> weakActivity;
 
-        public RetrievePhotosTask(String setID) {
+        public RetrievePhotosTask(String setID, PhotoAlbumActivity photoAlbumActivity) {
             photosURL = flickrURLForPhotoSet(setID);
+            weakActivity = new WeakReference<PhotoAlbumActivity>(photoAlbumActivity);
         }
 
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object[] params) {
             ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
             String json = baos.toString();
+            ArrayList<FlickrPhoto> albumPhotos = new ArrayList<FlickrPhoto>();
 
-            //TODO: get all the photooooooos!
+            try {
+                JSONObject root = new JSONObject(json);
 
-            return null;
-        }
-    };
+                String status = root.getString("stat");
+                if (status.equals("ok")) {
 
-    public static class LoadImageForPhoto extends AsyncTask<Object, Object, Bitmap> {
+                    JSONObject photoset = root.getJSONObject("photoset");
 
-        String photoURL;
+                    albumTitle = photoset.getString("title");
 
-        public LoadImageForPhoto(FlickrPhoto photo, String size) {
-            photoURL = flickrPhotoURLForFlickrPhoto(photo, size);
+                    JSONArray photos = photoset.getJSONArray("photo");
+
+                    for (int i = 0; i < photos.length(); i++) {
+                        JSONObject jsonPhoto = photos.getJSONObject(i);
+                        FlickrPhoto flickrPhoto = new FlickrPhoto();
+                        flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+                        flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+                        flickrPhoto.secret = jsonPhoto.getString("secret");
+                        flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+                        flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+                        albumPhotos.add(flickrPhoto);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return albumPhotos;
         }
 
         @Override
-        protected Bitmap doInBackground(Object... params) {
-            ByteArrayOutputStream baos = URLConnector.readBytes(photoURL);
-            String json = baos.toString();
-
-            return null;
+        protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
+            Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
+            PhotoAlbumActivity currentActivity = weakActivity.get();
+            Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+            currentActivity.mHandler.sendMessage(message);
         }
+    };
+
+    private static Bitmap loadImageForPhoto(FlickrPhoto flickrPhoto, boolean isThumbnail) {
+        String size = isThumbnail ? "m" : "b";
+        String photoURL = flickrPhotoURLForFlickrPhoto(flickrPhoto, size);
+        Bitmap bm = null;
+        try {
+            URL aURL = new URL(photoURL);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bm = BitmapFactory.decodeStream(is);
+            bis.close();
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
     }
 
     public static class LoadImagesForPhotos extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
@@ -139,8 +183,7 @@ public class FlickrManager {
         @Override
         protected void onPostExecute(ArrayList<Pair<String, String>> pairs) {
             FlickrPhotoAlbumActivity currentActivity = weakActivity.get();
-            Message message = currentActivity.mHandler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS);
-            message.obj = pairs;
+            Message message = currentActivity.mHandler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, pairs);
             currentActivity.mHandler.sendMessage(message);
         }
     };

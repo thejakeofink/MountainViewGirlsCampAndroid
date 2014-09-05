@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -32,8 +33,10 @@ public class PhotoAlbumActivity extends Activity {
         public void handleMessage(Message message) {
             switch (message.what) {
                 case MESSAGE_UPDATE_FLICKR_PHOTOS:
-                    ArrayList<FlickrPhoto> thePhotos = (ArrayList<FlickrPhoto>) message.obj;
-                    Log.v(TAG, "We got our albums " + thePhotos);
+                    Pair<String, ArrayList<FlickrPhoto>> titlePhotos = (Pair<String, ArrayList<FlickrPhoto>>) message.obj;
+                    ArrayList<FlickrPhoto> thePhotos = titlePhotos.second;
+                    String title = titlePhotos.first;
+                    PhotoAlbumActivity.this.getActionBar().setTitle(title);
                     photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
                     photoGridView.setAdapter(photoAdapter);
                     photoAdapter.notifyDataSetChanged();
@@ -51,13 +54,15 @@ public class PhotoAlbumActivity extends Activity {
 
         Intent intent = getIntent();
 
+        getActionBar().setTitle("");
+
         if (intent.getExtras() != null) {
             loadPhotosForPhotoset(intent.getExtras().getString(PHOTOSET_ID));
         }
     }
 
     private void loadPhotosForPhotoset(String albumID) {
-        FlickrManager.RetrievePhotosTask retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID);
+        FlickrManager.RetrievePhotosTask retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID, this);
         retrievePhotosTask.execute();
     }
 
@@ -120,8 +125,11 @@ class PhotoAdapter extends BaseAdapter {
         if (v == null) {
             // Need to create a view
             LayoutInflater inflater = activity.getLayoutInflater();
-            v = inflater.inflate(R.layout.grid_item_layout, parent,false);
+            v = inflater.inflate(R.layout.grid_photo_item_layout, parent,false);
         }
+
+
+        ((ImageView)v.findViewById(R.id.imgv_grid_item)).setImageBitmap(flickrPhotos.get(position).thumbnail);
 
         return v;
     }
