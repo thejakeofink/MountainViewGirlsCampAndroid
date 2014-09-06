@@ -73,8 +73,6 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
 
         if (bundle != null && bundle.containsKey(PHOTOSET_ID)) {
             loadPhotosForPhotoset(bundle.getString(PHOTOSET_ID));
-        } else {
-            Log.wtf(TAG, "WE HAVE A PROBLEM WITH TEH BUNDLES!!!!!!!!");
         }
     }
 
@@ -113,9 +111,18 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        openPhotoActivityForPosition(position);
+    }
+
+    private void openPhotoActivityForPosition(int position) {
         FlickrPhoto photoForBundle = (FlickrPhoto)photoAdapter.getItem(position);
         Intent photoIntent = new Intent(this, PhotoActivity.class);
-        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO, (Serializable) photoForBundle);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_THUMBNAIL, photoForBundle.thumbnail);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_LARGE_IMAGE, photoForBundle.largeImage);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_FARM, photoForBundle.farm);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_ID, photoForBundle.photoID);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_SECRET, photoForBundle.secret);
+        photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_SERVER, photoForBundle.server);
         startActivity(photoIntent);
     }
 }

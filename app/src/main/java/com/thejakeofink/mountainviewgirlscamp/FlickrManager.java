@@ -125,7 +125,10 @@ public class FlickrManager {
         }
     };
 
-    private static Bitmap loadImageForPhoto(FlickrPhoto flickrPhoto, boolean isThumbnail) {
+    /*
+    Do not call this method from the UI Thread!
+     */
+    public static Bitmap loadImageForPhoto(FlickrPhoto flickrPhoto, boolean isThumbnail) {
         String size = isThumbnail ? "m" : "b";
         String photoURL = flickrPhotoURLForFlickrPhoto(flickrPhoto, size);
         Bitmap bm = null;
