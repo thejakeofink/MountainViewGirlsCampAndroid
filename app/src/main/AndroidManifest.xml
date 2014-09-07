@@ -31,6 +31,10 @@
             android:name=".StudyGuideActivity"
             android:label="@string/title_activity_study_guide" >
         </activity>
+        <activity
+            android:name=".StudyGuideSelectActivity"
+            android:label="@string/title_activity_study_guide_select" >
+        </activity>
     </application>
 
 </manifest>

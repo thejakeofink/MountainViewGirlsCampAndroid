@@ -16,6 +16,7 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_page);
 
+        findViewById(R.id.btn_study_guides).setOnClickListener(this);
         findViewById(R.id.btn_pictures).setOnClickListener(this);
         findViewById(R.id.btn_quotes).setOnClickListener(this);
     }
@@ -25,6 +26,8 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
         switch (v.getId()) {
             case R.id.btn_study_guides:
                 // TODO: go to study guides...
+                Intent studyIntent = new Intent(this, StudyGuideSelectActivity.class);
+                startActivity(studyIntent);
                 break;
             case R.id.btn_pictures:
                 // TODO: go to pictures...
