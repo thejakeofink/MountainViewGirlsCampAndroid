@@ -58,7 +58,7 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
     }
 
     public void loadAlbums() {
-        FlickrManager.SearchFlickrForSetsTask getFlickrAlbumsTask = new FlickrManager.SearchFlickrForSetsTask(this);
+        FlickrManager.SearchFlickrForSetsTask getFlickrAlbumsTask = new FlickrManager.SearchFlickrForSetsTask(mHandler);
         getFlickrAlbumsTask.execute();
     }
 

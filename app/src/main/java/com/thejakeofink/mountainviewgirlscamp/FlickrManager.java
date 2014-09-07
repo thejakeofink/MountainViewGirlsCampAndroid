@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -53,17 +52,17 @@ public class FlickrManager {
     public static class RetrievePhotosTask extends AsyncTask<Object, ArrayList<FlickrPhoto>, ArrayList<FlickrPhoto>> {
         private static final String TAG = "RetrievePhotosTask";
         private static boolean failFast = false;
+        Handler handler;
         String photosURL;
         String albumTitle = "";
-        WeakReference<PhotoAlbumActivity> weakActivity;
 
         public void destroy() {
             failFast = true;
         }
 
-        public RetrievePhotosTask(String setID, PhotoAlbumActivity photoAlbumActivity) {
+        public RetrievePhotosTask(String setID, Handler handler) {
             photosURL = flickrURLForPhotoSet(setID);
-            weakActivity = new WeakReference<PhotoAlbumActivity>(photoAlbumActivity);
+            this.handler = handler;
             failFast = false;
         }
 
@@ -95,7 +94,7 @@ public class FlickrManager {
                         flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
                         flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
                         albumPhotos.add(flickrPhoto);
-                        if (i % 5 == 0) {
+                        if (i < 5 || i % 5 == 0) {
                             publishProgress(albumPhotos);
                         }
                     }
@@ -108,26 +107,24 @@ public class FlickrManager {
             return albumPhotos;
         }
 
+        private void updateAlbumActivity(Handler handler, ArrayList<FlickrPhoto> flickrPhotos) {
+            if (handler != null) {
+                Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
+                Message message = handler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+                handler.sendMessage(message);
+            }
+        }
+
         @Override
         protected void onProgressUpdate(ArrayList<FlickrPhoto>... values) {
             if (failFast) return;
-            Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, values[0]);
-            PhotoAlbumActivity currentActivity = weakActivity.get();
-            if (currentActivity != null) {
-                Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
-                currentActivity.mHandler.sendMessage(message);
-            }
+            updateAlbumActivity(handler, values[0]);
         }
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
             if (failFast) return;
-            Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
-            PhotoAlbumActivity currentActivity = weakActivity.get();
-            if (currentActivity != null) {
-                Message message = currentActivity.mHandler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
-                currentActivity.mHandler.sendMessage(message);
-            }
+            updateAlbumActivity(handler, flickrPhotos);
         }
     };
 
@@ -203,14 +200,14 @@ public class FlickrManager {
         }
     }
 
-    public static class SearchFlickrForSetsTask extends AsyncTask<Object, Object, ArrayList<Pair<String, String>>> {
+    public static class SearchFlickrForSetsTask extends AsyncTask<Object, ArrayList<Pair<String,String>>, ArrayList<Pair<String, String>>> {
         private static String TAG = "SearchFlickrForSetsTask";
         String listURL;
-        WeakReference<FlickrPhotoAlbumActivity> weakActivity;
+        Handler handler;
 
-        public SearchFlickrForSetsTask(FlickrPhotoAlbumActivity albumActivity) {
-            listURL = flickrListURLForAccount();
-            weakActivity = new WeakReference<FlickrPhotoAlbumActivity>(albumActivity);
+        public SearchFlickrForSetsTask(Handler handler) {
+            this.listURL = flickrListURLForAccount();
+            this.handler = handler;
         }
 
         @Override
@@ -235,6 +232,10 @@ public class FlickrManager {
                         albumTitle = tempObj.getJSONObject("title").getString("_content");
                         Pair<String, String> tempPair = new Pair<String, String>(albumID, albumTitle);
                         albums.add(tempPair);
+
+                        if (i < 5 || i % 5 == 0) {
+                            publishProgress(albums);
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -244,13 +245,21 @@ public class FlickrManager {
             return albums;
         }
 
+        private void updateUI(Handler handler, ArrayList<Pair<String, String>> albums) {
+            if (handler != null) {
+                Message message = handler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
+                handler.sendMessage(message);
+            }
+        }
+
+        @Override
+        protected void onProgressUpdate(ArrayList<Pair<String,String>>... values) {
+            updateUI(handler, values[0]);
+        }
+
         @Override
         protected void onPostExecute(ArrayList<Pair<String, String>> pairs) {
-            FlickrPhotoAlbumActivity currentActivity = weakActivity.get();
-            if (currentActivity != null) {
-                Message message = currentActivity.mHandler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, pairs);
-                currentActivity.mHandler.sendMessage(message);
-            }
+            updateUI(handler, pairs);
         }
     };
 

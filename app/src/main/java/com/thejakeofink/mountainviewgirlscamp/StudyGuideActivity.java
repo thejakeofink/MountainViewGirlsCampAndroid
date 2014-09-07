@@ -31,18 +31,23 @@ public class StudyGuideActivity extends Activity {
             switch (bundle.getInt(KEY_FILE_TO_LOAD)) {
                 case QUOTES:
                     studyGuideView.loadUrl("file:///android_asset/Temple Spotlight.htm");
+                    getActionBar().setTitle(R.string.quotes);
                     break;
                 case FAITH:
                     studyGuideView.loadUrl("file:///android_asset/FaithFriendshipsStudyGuide.htm");
+                    getActionBar().setTitle(R.string.faith_friendships);
                     break;
                 case REVELATION:
                     studyGuideView.loadUrl("file:///android_asset/PersonalRevelationTempleStudyGuide.htm");
+                    getActionBar().setTitle(R.string.personal_rev);
                     break;
                 case TEMPTATION:
                     studyGuideView.loadUrl("file:///android_asset/TemptationStudyGuide.htm");
+                    getActionBar().setTitle(R.string.tempation);
                     break;
                 case THEME:
                     studyGuideView.loadUrl("file:///android_asset/YoungWomenThemeStudyGuide.htm");
+                    getActionBar().setTitle(R.string.theme);
                     break;
             }
         }

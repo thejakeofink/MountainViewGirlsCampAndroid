@@ -68,7 +68,7 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
 
         Bundle bundle = getIntent().getExtras();
 
-        ActionBar actionBar = getActionBar();
+        actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setTitle("");
         }
@@ -87,7 +87,7 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
     }
 
     private void loadPhotosForPhotoset(String albumID) {
-        retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID, this);
+        retrievePhotosTask = new FlickrManager.RetrievePhotosTask(albumID, mHandler);
         retrievePhotosTask.execute();
     }
 
