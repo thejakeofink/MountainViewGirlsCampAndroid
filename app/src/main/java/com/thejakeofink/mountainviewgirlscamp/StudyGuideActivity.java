@@ -36,7 +36,7 @@ public class StudyGuideActivity extends Activity {
                     studyGuideView.loadUrl("file:///android_asset/FaithFriendshipsStudyGuide.htm");
                     break;
                 case REVELATION:
-                    studyGuideView.loadUrl("file:///android_asset/PersonalRevelationStudyGuide.htm");
+                    studyGuideView.loadUrl("file:///android_asset/PersonalRevelationTempleStudyGuide.htm");
                     break;
                 case TEMPTATION:
                     studyGuideView.loadUrl("file:///android_asset/TemptationStudyGuide.htm");
