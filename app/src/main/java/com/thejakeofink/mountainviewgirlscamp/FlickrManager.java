@@ -191,10 +191,15 @@ public class FlickrManager {
                 uris.add(uri);
             }
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            if (uris.size() > 1) {
+                intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            } else {
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+            }
             intent.setType("image/*");
-            context.startActivity(Intent.createChooser(intent, "select some pic"));
+            context.startActivity(Intent.createChooser(intent, "Select App to Share"));
         }
     }
 
