@@ -71,39 +71,40 @@ public class FlickrManager {
             ArrayList<FlickrPhoto> albumPhotos = new ArrayList<FlickrPhoto>();
             if (failFast) return albumPhotos;
             ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
-            String json = baos.toString();
+            if (baos != null) {
+                String json = baos.toString();
 
-            try {
-                JSONObject root = new JSONObject(json);
+                try {
+                    JSONObject root = new JSONObject(json);
 
-                String status = root.getString("stat");
-                if (status.equals("ok")) {
+                    String status = root.getString("stat");
+                    if (status.equals("ok")) {
 
-                    JSONObject photoset = root.getJSONObject("photoset");
+                        JSONObject photoset = root.getJSONObject("photoset");
 
-                    albumTitle = photoset.getString("title");
+                        albumTitle = photoset.getString("title");
 
-                    JSONArray photos = photoset.getJSONArray("photo");
+                        JSONArray photos = photoset.getJSONArray("photo");
 
-                    for (int i = 0; i < photos.length() && !failFast; i++) {
-                        JSONObject jsonPhoto = photos.getJSONObject(i);
-                        FlickrPhoto flickrPhoto = new FlickrPhoto();
-                        flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
-                        flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
-                        flickrPhoto.secret = jsonPhoto.getString("secret");
-                        flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
-                        flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
-                        albumPhotos.add(flickrPhoto);
-                        if (i < 5 || i % 5 == 0) {
-                            publishProgress(albumPhotos);
+                        for (int i = 0; i < photos.length() && !failFast; i++) {
+                            JSONObject jsonPhoto = photos.getJSONObject(i);
+                            FlickrPhoto flickrPhoto = new FlickrPhoto();
+                            flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+                            flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+                            flickrPhoto.secret = jsonPhoto.getString("secret");
+                            flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+                            flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+                            albumPhotos.add(flickrPhoto);
+                            if (i < 5 || i % 5 == 0) {
+                                publishProgress(albumPhotos);
+                            }
                         }
                     }
+
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
                 }
-
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
             }
-
             return albumPhotos;
         }
 
@@ -213,35 +214,36 @@ public class FlickrManager {
         @Override
         protected ArrayList<Pair<String, String>> doInBackground(Object[] params) {
             ByteArrayOutputStream baos = URLConnector.readBytes(listURL);
-            String json = baos.toString();
-            ArrayList<Pair<String,String>> albums = new ArrayList<Pair<String, String>>();
-            try {
-                JSONObject root = new JSONObject(json);
+            ArrayList<Pair<String, String>> albums = new ArrayList<Pair<String, String>>();
+            if (baos != null) {
+                String json = baos.toString();
+                try {
+                    JSONObject root = new JSONObject(json);
 
-                String status = root.getString("stat");
-                if (status.equals("ok")) {
-                    JSONObject rootContent = root.getJSONObject("photosets");
+                    String status = root.getString("stat");
+                    if (status.equals("ok")) {
+                        JSONObject rootContent = root.getJSONObject("photosets");
 
-                    JSONArray photosets = rootContent.getJSONArray("photoset");
+                        JSONArray photosets = rootContent.getJSONArray("photoset");
 
-                    for (int i = 0; i < photosets.length(); i++) {
-                        JSONObject tempObj = photosets.getJSONObject(i);
-                        String albumTitle;
-                        String albumID;
-                        albumID = tempObj.getString("id");
-                        albumTitle = tempObj.getJSONObject("title").getString("_content");
-                        Pair<String, String> tempPair = new Pair<String, String>(albumID, albumTitle);
-                        albums.add(tempPair);
+                        for (int i = 0; i < photosets.length(); i++) {
+                            JSONObject tempObj = photosets.getJSONObject(i);
+                            String albumTitle;
+                            String albumID;
+                            albumID = tempObj.getString("id");
+                            albumTitle = tempObj.getJSONObject("title").getString("_content");
+                            Pair<String, String> tempPair = new Pair<String, String>(albumID, albumTitle);
+                            albums.add(tempPair);
 
-                        if (i < 5 || i % 5 == 0) {
-                            publishProgress(albums);
+                            if (i < 5 || i % 5 == 0) {
+                                publishProgress(albums);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-
             return albums;
         }
 

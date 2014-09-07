@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -33,9 +34,21 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
             switch (message.what) {
                 case MESSAGE_UPDATE_FLICKR_ALBUMS:
                     ArrayList<Pair<String, String>> thealbums = (ArrayList<Pair<String, String>>) message.obj;
-                    albumAdapter = new AlbumAdapter(thealbums, FlickrPhotoAlbumActivity.this);
-                    albumGridView.setAdapter(albumAdapter);
-                    albumAdapter.notifyDataSetChanged();
+
+                    if (!thealbums.isEmpty()) {
+                        if (albumAdapter != null) {
+                            albumAdapter.clear();
+                            albumAdapter.refill(thealbums);
+                        } else {
+                            albumAdapter = new AlbumAdapter(thealbums);
+                            albumGridView.setAdapter(albumAdapter);
+                            albumGridView.setOnItemClickListener(FlickrPhotoAlbumActivity.this);
+                        }
+
+                        albumAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(FlickrPhotoAlbumActivity.this, "An Internet connection is required to view photos.", Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }
@@ -68,51 +81,60 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
         photoAlbumIntent.putExtra(PhotoAlbumActivity.PHOTOSET_ID, "" + id);
         startActivity(photoAlbumIntent);
     }
-}
 
-class AlbumAdapter extends BaseAdapter {
+    class AlbumAdapter extends BaseAdapter {
 
-    private static String TAG = "AlbumAdapter";
+        private String TAG = "AlbumAdapter";
 
-    ArrayList<Pair<String, String>> albumIdsTitles;
-    Activity activity;
+        ArrayList<Pair<String, String>> albumIdsTitles;
 
-    public AlbumAdapter(Activity a) {
-        albumIdsTitles = new ArrayList<Pair<String, String>>();
-        activity = a;
-    }
-
-    public AlbumAdapter(ArrayList<Pair<String, String>> albums, Activity a) {
-        albumIdsTitles = albums;
-        activity = a;
-    }
-
-    @Override
-    public int getCount() {
-        return albumIdsTitles.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return albumIdsTitles.get(position).second;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return Long.parseLong(albumIdsTitles.get(position).first);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        if (v == null) {
-            // Need to create a view
-            LayoutInflater inflater = activity.getLayoutInflater();
-            v = inflater.inflate(R.layout.grid_item_layout, parent,false);
+        public AlbumAdapter() {
+            albumIdsTitles = new ArrayList<Pair<String, String>>();
         }
 
-        ((TextView)v.findViewById(R.id.txv_grid_item)).setText(albumIdsTitles.get(position).second);
+        public AlbumAdapter(ArrayList<Pair<String, String>> albums) {
+            albumIdsTitles = (ArrayList<Pair<String,String>>)albums.clone();
+        }
 
-        return v;
+        public void clear() {
+            albumIdsTitles.clear();
+        }
+
+        public void refill(ArrayList<Pair<String,String>> albums) {
+            for (Pair<String, String> p : albums) {
+                albumIdsTitles.add(p);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return albumIdsTitles.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return albumIdsTitles.get(position).second;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return Long.parseLong(albumIdsTitles.get(position).first);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                // Need to create a view
+                LayoutInflater inflater = FlickrPhotoAlbumActivity.this.getLayoutInflater();
+                v = inflater.inflate(R.layout.grid_item_layout, parent,false);
+            }
+
+            ((TextView)v.findViewById(R.id.txv_grid_item)).setText(albumIdsTitles.get(position).second);
+
+            return v;
+        }
     }
 }
+
+

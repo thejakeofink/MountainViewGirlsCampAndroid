@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -44,16 +45,20 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
                     if (actionBar != null && actionBar.getTitle().equals("")) {
                         actionBar.setTitle(title);
                     }
-                    if (photoAdapter != null) {
-                        photoAdapter.clear();
-                        photoAdapter.refill(thePhotos);
-                    } else {
-                        photoAdapter = new PhotoAdapter(thePhotos);
-                        photoGridView.setAdapter(photoAdapter);
-                        photoGridView.setOnItemClickListener(PhotoAlbumActivity.this);
-                    }
+                    if (!thePhotos.isEmpty()) {
+                        if (photoAdapter != null) {
+                            photoAdapter.clear();
+                            photoAdapter.refill(thePhotos);
+                        } else {
+                            photoAdapter = new PhotoAdapter(thePhotos);
+                            photoGridView.setAdapter(photoAdapter);
+                            photoGridView.setOnItemClickListener(PhotoAlbumActivity.this);
+                        }
 
-                    photoAdapter.notifyDataSetChanged();
+                        photoAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(PhotoAlbumActivity.this, "An Internet connection is required to view photos.", Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }
