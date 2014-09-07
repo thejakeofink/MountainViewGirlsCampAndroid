@@ -27,6 +27,10 @@
             android:name=".PhotoActivity"
             android:label="@string/title_activity_photo" >
         </activity>
+        <activity
+            android:name=".StudyGuideActivity"
+            android:label="@string/title_activity_study_guide" >
+        </activity>
     </application>
 
 </manifest>

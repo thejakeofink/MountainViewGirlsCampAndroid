@@ -16,7 +16,8 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial_page);
 
-        ((Button)findViewById(R.id.btn_pictures)).setOnClickListener(this);
+        findViewById(R.id.btn_pictures).setOnClickListener(this);
+        findViewById(R.id.btn_quotes).setOnClickListener(this);
     }
 
     @Override
@@ -32,6 +33,9 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
                 break;
             case R.id.btn_quotes:
                 // TODO: go to quotes...
+                Intent quotesIntent = new Intent(this, StudyGuideActivity.class);
+                quotesIntent.putExtra(StudyGuideActivity.KEY_FILE_TO_LOAD, StudyGuideActivity.QUOTES);
+                startActivity(quotesIntent);
                 break;
         }
     }
