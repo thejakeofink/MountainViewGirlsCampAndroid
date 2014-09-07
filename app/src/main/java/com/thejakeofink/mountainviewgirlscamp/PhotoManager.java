@@ -3,6 +3,7 @@ package com.thejakeofink.mountainviewgirlscamp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 
@@ -22,13 +23,10 @@ public class PhotoManager {
         this.handler = handler;
     }
 
-    public Bitmap getPhotoForFlickrPhoto(final FlickrPhoto flickrPhoto) {
+    public Bitmap getPhotoForFlickrPhoto(final FlickrPhoto flickrPhoto, boolean onUiThread) {
         if (context.getExternalFilesDir(null) == null) return null;
 
-        String root =  Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + context.getApplicationContext().getPackageName()
-                + "/Files";
+        String root = getRoot(context);
         File folder = new File(root);
         String myFilePath = "";
 
@@ -43,7 +41,7 @@ public class PhotoManager {
 
                 @Override
                 public boolean accept(File file) {
-                    return file.getName().startsWith(String.valueOf(flickrPhoto.photoID + "_b"));
+                    return file.getName().startsWith(getFileNameFromFlickrPhoto(flickrPhoto));
                 }
             });
 
@@ -61,21 +59,54 @@ public class PhotoManager {
             Bitmap bitmap = BitmapFactory.decodeFile(myFilePath, options);
             return bitmap;
         } else {
-            FlickrManager.GetFullPhoto getFullPhoto = new FlickrManager.GetFullPhoto(flickrPhoto, handler, context);
-            getFullPhoto.execute();
+            if (onUiThread) {
+                FlickrManager.GetFullPhoto getFullPhoto = new FlickrManager.GetFullPhoto(flickrPhoto, handler, context);
+                getFullPhoto.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else {
+                flickrPhoto.largeImage = FlickrManager.loadImageForPhoto(flickrPhoto, false);
+                FlickrManager.savePhotoToFile(flickrPhoto, context);
+            }
         }
 
         return null;
+    }
+
+    public static String getFileNameFromFlickrPhoto(FlickrPhoto fp) {
+        return fp.photoID + "_b";
+    }
+
+    public static File getFile(Context context, final String fileName) {
+
+        String root = getRoot(context);
+
+        File myDir = new File(root);
+        File[] files = myDir.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File file) {
+                return file.getName().startsWith(fileName);
+            }
+        });
+
+        if (files.length > 0) {
+            return files[0];
+        } else {
+            return null;
+        }
+    }
+
+    public static String getRoot(Context context) {
+        return Environment.getExternalStorageDirectory()
+                + "/Android/data/"
+                + context.getApplicationContext().getPackageName()
+                + "/Files";
     }
 
     public static File getOutputMediaFile(Context context, String fileName){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
-                + "/Android/data/"
-                + context.getApplicationContext().getPackageName()
-                + "/Files");
+        File mediaStorageDir = new File(getRoot(context));
 
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.

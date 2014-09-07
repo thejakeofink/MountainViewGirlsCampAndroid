@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -154,18 +155,19 @@ public class FlickrManager {
 
     public static class LoadImagesForPhotos extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
         ArrayList<FlickrPhoto> photosToShare;
-        WeakReference<PhotoAlbumActivity> weakActivity;
+        Context context;
 
-        public LoadImagesForPhotos(ArrayList<FlickrPhoto> photos, PhotoAlbumActivity activity) {
-            photosToShare = photos;
-            weakActivity = new WeakReference<PhotoAlbumActivity>(activity);
+        public LoadImagesForPhotos(ArrayList<FlickrPhoto> photos, Context context) {
+            this.photosToShare = photos;
+            this.context = context;
         }
 
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object... params) {
+            PhotoManager pm = new PhotoManager(context, null);
             for (FlickrPhoto p : photosToShare) {
                 if (p.largeImage == null) {
-                    p.largeImage = loadImageForPhoto(p, false);
+                    p.largeImage = pm.getPhotoForFlickrPhoto(p, false);
                 }
             }
 
@@ -174,20 +176,25 @@ public class FlickrManager {
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
-            ArrayList<Bitmap> parcelable = new ArrayList<Bitmap>();
-            PhotoAlbumActivity pAA = weakActivity.get();
+            ArrayList<File> files = new ArrayList<File>();
+            ArrayList<Uri> uris = new ArrayList<Uri>();
 
             for (FlickrPhoto p : flickrPhotos) {
-                if (p.largeImage != null) {
-                    parcelable.add(p.largeImage);
+                File file = PhotoManager.getFile(context, PhotoManager.getFileNameFromFlickrPhoto(p));
+                if (file != null) {
+                    files.add(file);
                 }
             }
 
+            for(File file : files ) {
+                Uri uri = Uri.fromFile(file);
+                uris.add(uri);
+            }
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, parcelable);
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
             intent.setType("image/*");
-            pAA.startActivity(Intent.createChooser(intent, "select some pic"));
+            context.startActivity(Intent.createChooser(intent, "select some pic"));
         }
     }
 
@@ -257,7 +264,7 @@ public class FlickrManager {
         @Override
         protected Object doInBackground(Object... params) {
 
-            flickrPhoto.largeImage = FlickrManager.loadImageForPhoto(flickrPhoto, false);
+            flickrPhoto.largeImage = loadImageForPhoto(flickrPhoto, false);
 
             return null;
         }
@@ -269,21 +276,28 @@ public class FlickrManager {
                 handler.sendMessage(message);
             }
 
-            String fname = flickrPhoto.photoID + "_b.jpg";
+            savePhotoToFile(flickrPhoto, context);
+        }
+    }
 
-            //Set the new path where you would like the photo to be saved.
-            File file = PhotoManager.getOutputMediaFile(context, fname);
-            try {
-                FileOutputStream out = new FileOutputStream(file);
-                if(flickrPhoto.largeImage != null){
-                    flickrPhoto.largeImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
-                }
-                out.flush();
-                out.close();
+    /*
+    Don't call from the UI Thread.
+     */
+    public static void savePhotoToFile(FlickrPhoto flickrPhoto, Context context) {
+        String fname = PhotoManager.getFileNameFromFlickrPhoto(flickrPhoto) + ".jpg";
 
-            } catch (Exception e) {
-                e.printStackTrace();
+        //Set the new path where you would like the photo to be saved.
+        File file = PhotoManager.getOutputMediaFile(context, fname);
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            if(flickrPhoto.largeImage != null){
+                flickrPhoto.largeImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
             }
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

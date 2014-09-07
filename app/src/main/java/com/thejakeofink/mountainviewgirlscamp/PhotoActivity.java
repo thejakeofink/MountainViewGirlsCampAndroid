@@ -72,7 +72,7 @@ public class PhotoActivity extends Activity {
         if (flickrPhoto != null) {
             PhotoManager pm = new PhotoManager(this, mHandler);
 
-            flickrPhoto.largeImage = pm.getPhotoForFlickrPhoto(flickrPhoto);
+            flickrPhoto.largeImage = pm.getPhotoForFlickrPhoto(flickrPhoto, true);
 
             if (flickrPhoto.largeImage == null) {
                 photoView.setImageBitmap(flickrPhoto.thumbnail);
