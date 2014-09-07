@@ -70,10 +70,12 @@ public class PhotoActivity extends Activity {
 
     private void updatePhotoView() {
         if (flickrPhoto != null) {
+            PhotoManager pm = new PhotoManager(this, mHandler);
+
+            flickrPhoto.largeImage = pm.getPhotoForFlickrPhoto(flickrPhoto);
+
             if (flickrPhoto.largeImage == null) {
                 photoView.setImageBitmap(flickrPhoto.thumbnail);
-                GetFullPhoto getFullPhoto = new GetFullPhoto(flickrPhoto, this);
-                getFullPhoto.execute();
             } else {
                 photoView.setImageBitmap(flickrPhoto.largeImage);
             }
@@ -129,30 +131,4 @@ public class PhotoActivity extends Activity {
 //    }
 }
 
-class GetFullPhoto extends AsyncTask<Object, Object, Object> {
 
-    FlickrPhoto flickrPhoto;
-    WeakReference<PhotoActivity> weakActivity;
-
-    public GetFullPhoto(FlickrPhoto photo, PhotoActivity activity){
-        flickrPhoto = photo;
-        weakActivity = new WeakReference<PhotoActivity>(activity);
-    }
-
-    @Override
-    protected Object doInBackground(Object... params) {
-
-        flickrPhoto.largeImage = FlickrManager.loadImageForPhoto(flickrPhoto, false);
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Object o) {
-        PhotoActivity currentActivity = weakActivity.get();
-        if (currentActivity != null) {
-            Message message = currentActivity.mHandler.obtainMessage(PhotoActivity.MESSAGE_UPDATE_FLICKR_PHOTO, flickrPhoto);
-            currentActivity.mHandler.sendMessage(message);
-        }
-    }
-}

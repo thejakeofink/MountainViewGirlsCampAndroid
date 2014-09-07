@@ -1,8 +1,11 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Pair;
@@ -12,6 +15,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -148,23 +153,41 @@ public class FlickrManager {
     }
 
     public static class LoadImagesForPhotos extends AsyncTask<Object, Object, ArrayList<FlickrPhoto>> {
-
         ArrayList<FlickrPhoto> photosToShare;
+        WeakReference<PhotoAlbumActivity> weakActivity;
 
-        public LoadImagesForPhotos(ArrayList<FlickrPhoto> photos) {
+        public LoadImagesForPhotos(ArrayList<FlickrPhoto> photos, PhotoAlbumActivity activity) {
             photosToShare = photos;
+            weakActivity = new WeakReference<PhotoAlbumActivity>(activity);
         }
 
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object... params) {
             for (FlickrPhoto p : photosToShare) {
-
-                String photoURL = flickrPhotoURLForFlickrPhoto(p, "b");
-                ByteArrayOutputStream baos = URLConnector.readBytes(photoURL);
-                String json = baos.toString();
+                if (p.largeImage == null) {
+                    p.largeImage = loadImageForPhoto(p, false);
+                }
             }
 
-            return null;
+            return photosToShare;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
+            ArrayList<Bitmap> parcelable = new ArrayList<Bitmap>();
+            PhotoAlbumActivity pAA = weakActivity.get();
+
+            for (FlickrPhoto p : flickrPhotos) {
+                if (p.largeImage != null) {
+                    parcelable.add(p.largeImage);
+                }
+            }
+
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, parcelable);
+            intent.setType("image/*");
+            pAA.startActivity(Intent.createChooser(intent, "select some pic"));
         }
     }
 
@@ -218,6 +241,51 @@ public class FlickrManager {
             }
         }
     };
+
+    public static class GetFullPhoto extends AsyncTask<Object, Object, Object> {
+
+        FlickrPhoto flickrPhoto;
+        Handler handler;
+        Context context;
+
+        public GetFullPhoto(FlickrPhoto photo, Handler handler, Context context){
+            this.flickrPhoto = photo;
+            this.handler = handler;
+            this.context = context;
+        }
+
+        @Override
+        protected Object doInBackground(Object... params) {
+
+            flickrPhoto.largeImage = FlickrManager.loadImageForPhoto(flickrPhoto, false);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            if (handler != null) {
+                Message message = handler.obtainMessage(PhotoActivity.MESSAGE_UPDATE_FLICKR_PHOTO, flickrPhoto);
+                handler.sendMessage(message);
+            }
+
+            String fname = flickrPhoto.photoID + "_b.jpg";
+
+            //Set the new path where you would like the photo to be saved.
+            File file = PhotoManager.getOutputMediaFile(context, fname);
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                if(flickrPhoto.largeImage != null){
+                    flickrPhoto.largeImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                }
+                out.flush();
+                out.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
 

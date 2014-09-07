@@ -157,7 +157,16 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
+        ArrayList<FlickrPhoto> photosToShare = new ArrayList<FlickrPhoto>();
 
+        for (FlickrPhoto fp : photoAdapter.flickrPhotos) {
+            if (fp.selected) {
+                photosToShare.add(fp);
+            }
+        }
+
+        FlickrManager.LoadImagesForPhotos loadImagesForPhotos = new FlickrManager.LoadImagesForPhotos(photosToShare, this);
+        loadImagesForPhotos.execute();
 
         actionMode.finish();
         return false;
@@ -165,6 +174,10 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        for (FlickrPhoto p : photoAdapter.flickrPhotos) {
+            p.selected = false;
+        }
+        photoAdapter.notifyDataSetChanged();
         actionMode = null;
     }
 
