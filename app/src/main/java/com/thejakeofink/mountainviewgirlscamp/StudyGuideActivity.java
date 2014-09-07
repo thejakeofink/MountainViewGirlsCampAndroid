@@ -1,5 +1,6 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,6 +18,7 @@ public class StudyGuideActivity extends Activity {
     public static final String KEY_FILE_TO_LOAD = "fileToLoad";
 
     WebView studyGuideView;
+    ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,29 +29,37 @@ public class StudyGuideActivity extends Activity {
 
         studyGuideView = (WebView) findViewById(R.id.wbv_study_guide);
 
+        actionBar = getActionBar();
+
+        String title = "";
+
         if (bundle != null) {
             switch (bundle.getInt(KEY_FILE_TO_LOAD)) {
                 case QUOTES:
                     studyGuideView.loadUrl("file:///android_asset/Temple Spotlight.htm");
-                    getActionBar().setTitle(R.string.quotes);
+                    title = getResources().getString(R.string.quotes);
                     break;
                 case FAITH:
                     studyGuideView.loadUrl("file:///android_asset/FaithFriendshipsStudyGuide.htm");
-                    getActionBar().setTitle(R.string.faith_friendships);
+                    title = getResources().getString(R.string.faith_friendships);
                     break;
                 case REVELATION:
                     studyGuideView.loadUrl("file:///android_asset/PersonalRevelationTempleStudyGuide.htm");
-                    getActionBar().setTitle(R.string.personal_rev);
+                    title = getResources().getString(R.string.personal_rev);
                     break;
                 case TEMPTATION:
                     studyGuideView.loadUrl("file:///android_asset/TemptationStudyGuide.htm");
-                    getActionBar().setTitle(R.string.tempation);
+                    title = getResources().getString(R.string.tempation);
                     break;
                 case THEME:
                     studyGuideView.loadUrl("file:///android_asset/YoungWomenThemeStudyGuide.htm");
-                    getActionBar().setTitle(R.string.theme);
+                    title = getResources().getString(R.string.theme);
                     break;
             }
+        }
+
+        if (actionBar != null) {
+            actionBar.setTitle(title);
         }
     }
 }
