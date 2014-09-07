@@ -6,10 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.util.Pair;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener {
+public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener, ActionMode.Callback {
     private static final String TAG = "PhotoAlbumActivity";
     public static final String PHOTOSET_ID = "photosetID";
     public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 0;
@@ -31,6 +31,7 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
     GridView photoGridView;
     FlickrManager.RetrievePhotosTask retrievePhotosTask;
     ActionBar actionBar;
+    ActionMode actionMode;
 
     public Handler mHandler = new Handler() {
         @Override
@@ -47,10 +48,11 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
                         photoAdapter.clear();
                         photoAdapter.refill(thePhotos);
                     } else {
-                        photoAdapter = new PhotoAdapter(thePhotos, PhotoAlbumActivity.this);
+                        photoAdapter = new PhotoAdapter(thePhotos);
                         photoGridView.setAdapter(photoAdapter);
                         photoGridView.setOnItemClickListener(PhotoAlbumActivity.this);
                     }
+
                     photoAdapter.notifyDataSetChanged();
                     break;
             }
@@ -89,6 +91,8 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
         retrievePhotosTask.execute();
     }
 
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -103,7 +107,9 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_share) {
-            finish();
+            if (actionMode == null) {
+                actionMode = this.startActionMode(this);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -111,7 +117,17 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        openPhotoActivityForPosition(position);
+        if (actionMode == null) {
+            openPhotoActivityForPosition(position);
+        } else {
+            selectPhotoAtPosition(position);
+        }
+    }
+
+    private void selectPhotoAtPosition(int pos) {
+        boolean photoSelected = !((FlickrPhoto)photoAdapter.getItem(pos)).selected;
+        ((FlickrPhoto)photoAdapter.getItem(pos)).selected = photoSelected;
+        photoAdapter.notifyDataSetChanged();
     }
 
     private void openPhotoActivityForPosition(int position) {
@@ -125,62 +141,95 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
         photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_SERVER, photoForBundle.server);
         startActivity(photoIntent);
     }
-}
 
-class PhotoAdapter extends BaseAdapter {
-
-    private static String TAG = "AlbumAdapter";
-
-    ArrayList<FlickrPhoto> flickrPhotos;
-    Activity activity;
-
-    public PhotoAdapter(Activity a) {
-        flickrPhotos = new ArrayList<FlickrPhoto>();
-        activity = a;
-    }
-
-    public PhotoAdapter(ArrayList<FlickrPhoto> photos, Activity a) {
-        flickrPhotos = (ArrayList<FlickrPhoto>) photos.clone();
-        activity = a;
-    }
-
-    public void clear() {
-        flickrPhotos.clear();
-    }
-
-    public void refill(ArrayList<FlickrPhoto> photos) {
-        for (FlickrPhoto p : photos) {
-            flickrPhotos.add(p);
-        }
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.share_contextual, menu);
+        return true;
     }
 
     @Override
-    public int getCount() {
-        return flickrPhotos.size();
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
     }
 
     @Override
-    public Object getItem(int position) {
-        return flickrPhotos.get(position);
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+
+
+        actionMode.finish();
+        return false;
     }
 
     @Override
-    public long getItemId(int position) {
-        return flickrPhotos.get(position).photoID;
+    public void onDestroyActionMode(ActionMode mode) {
+        actionMode = null;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        if (v == null) {
-            // Need to create a view
-            LayoutInflater inflater = activity.getLayoutInflater();
-            v = inflater.inflate(R.layout.grid_photo_item_layout, parent,false);
+
+    public class PhotoAdapter extends BaseAdapter {
+
+        private String TAG = "AlbumAdapter";
+
+        ArrayList<FlickrPhoto> flickrPhotos;
+
+        public PhotoAdapter() {
+            flickrPhotos = new ArrayList<FlickrPhoto>();
         }
 
+        public PhotoAdapter(ArrayList<FlickrPhoto> photos) {
+            flickrPhotos = (ArrayList<FlickrPhoto>) photos.clone();
+        }
 
-        ((ImageView)v.findViewById(R.id.imgv_grid_item)).setImageBitmap(flickrPhotos.get(position).thumbnail);
+        public void clear() {
+            flickrPhotos.clear();
+        }
 
-        return v;
+        public void refill(ArrayList<FlickrPhoto> photos) {
+            for (FlickrPhoto p : photos) {
+                flickrPhotos.add(p);
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return flickrPhotos.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return flickrPhotos.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return flickrPhotos.get(position).photoID;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                // Need to create a view
+                LayoutInflater inflater = PhotoAlbumActivity.this.getLayoutInflater();
+                v = inflater.inflate(R.layout.grid_photo_item_layout, parent,false);
+            }
+
+            ((ImageView)v.findViewById(R.id.imgv_grid_item)).setImageBitmap(flickrPhotos.get(position).thumbnail);
+            if (flickrPhotos.get(position).selected) {
+                v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.item_border_selected_white));
+            } else {
+                v.setBackgroundDrawable(v.getResources().getDrawable(R.drawable.list_selector_white));
+            }
+
+//            v.setOnLongClickListener(PhotoAlbumActivity.this.longClickListener);
+//
+//            v.setTag(position);
+
+            return v;
+        }
     }
 }
+

@@ -27,4 +27,5 @@ public class FlickrPhoto {
     public int farm;
     public int server;
     public String secret;
+    public boolean selected = false;
 }
