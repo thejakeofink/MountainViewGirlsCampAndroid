@@ -3,6 +3,7 @@ package com.thejakeofink.mountainviewgirlscamp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +12,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -29,6 +32,7 @@ public class PhotoActivity extends Activity {
 
     FlickrPhoto flickrPhoto;
     ImageView photoView;
+    ShareActionProvider mShareActionProvider;
 
     public Handler mHandler = new Handler() {
         @Override
@@ -78,8 +82,20 @@ public class PhotoActivity extends Activity {
                 photoView.setImageBitmap(flickrPhoto.thumbnail);
             } else {
                 photoView.setImageBitmap(flickrPhoto.largeImage);
+
+                buildAndSetShareIntent();
             }
         }
+    }
+
+    private void buildAndSetShareIntent() {
+        File file = PhotoManager.getFile(this, PhotoManager.getFileNameFromFlickrPhoto(flickrPhoto));
+        Uri uri = Uri.fromFile(file);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.setType("image/*");
+        setShareIntent(intent);
     }
 
     private FlickrPhoto loadPhotoFromBundle(Bundle bundle) {
@@ -110,25 +126,35 @@ public class PhotoActivity extends Activity {
     /*
     Possible Additional share feature in each photo. For now commented out.
      */
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.photo_album, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_share) {
-//            finish();
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.photo, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.menu_item_share) {
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
 }
 
 
