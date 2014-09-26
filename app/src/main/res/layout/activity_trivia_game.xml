@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:layout_weight=".75"
         android:gravity="center"
+        android:textSize="20sp"
         android:text="@string/hello_world" />
 
     <LinearLayout
@@ -37,28 +38,28 @@
 
     <Button
         android:id="@+id/btn_answer_one"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/answer_text" />
 
     <Button
         android:id="@+id/btn_answer_two"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/answer_text" />
 
     <Button
         android:id="@+id/btn_answer_three"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/answer_text" />
 
     <Button
         android:id="@+id/btn_answer_four"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:text="@string/answer_text" />

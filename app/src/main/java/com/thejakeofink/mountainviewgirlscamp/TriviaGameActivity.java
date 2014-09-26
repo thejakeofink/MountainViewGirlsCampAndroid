@@ -103,17 +103,19 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
             currentQuestion = quizLoader.get(quizLoader.indexOf(currentQuestion) + 1);
             populateQuestion();
         } else {
-            getMenuInflater().inflate(R.menu.photo, menu);
+            if (mShareActionProvider == null) {
+                getMenuInflater().inflate(R.menu.photo, menu);
 
-            MenuItem item = menu.findItem(R.id.menu_item_share);
+                MenuItem item = menu.findItem(R.id.menu_item_share);
 
-            mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+                mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, "I just played the Mountain View Girls Camp Temple Trivia game and my score was " + score + "!!!");
-            intent.setType("text/plain");
-            setShareIntent(intent);
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT, "I just played the Mountain View Girls Camp Temple Trivia game and my score was " + score + "!!!");
+                intent.setType("text/plain");
+                setShareIntent(intent);
+            }
         }
     }
 
@@ -121,7 +123,9 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         if (v instanceof Button) {
             if (((Button) v).getText().equals(currentQuestion.correctAnswer)) {
-                increaseScore();
+                if (mShareActionProvider == null) {
+                    increaseScore();
+                }
                 loadNextQuestion();
             } else {
                 loadNextQuestion();
