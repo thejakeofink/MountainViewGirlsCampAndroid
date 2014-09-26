@@ -5,20 +5,441 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_share">Share</string>
     <string name="action_done">Done</string>
-    // Initial page    <string name="study_guides">Study Guides</string>
+    // Initial page
+    <string name="study_guides">Study Guides</string>
     <string name="pictures">Pictures</string>
     <string name="quotes">Temple Quotes\nFrom the Blind Walk</string>
     <string name="game">Temple Trivia Game</string>
-    // Study Guides    <string name="faith_friendships">Faith &amp; Friendships</string>
+    // Study Guides
+    <string name="faith_friendships">Faith &amp; Friendships</string>
     <string name="personal_rev">Personal Revelation\n &amp; The Temple</string>
     <string name="tempation">Temptation</string>
     <string name="theme">The Young Women\'s\nTheme</string>
-    // Auto    <string name="title_activity_photo">PhotoActivity</string>
+    // Auto
+    <string name="title_activity_photo">PhotoActivity</string>
     <string name="title_activity_study_guide">StudyGuideActivity</string>
     <string name="title_activity_study_guide_select">StudyGuideSelectActivity</string>
     <string name="title_activity_photo_album">PhotoAlbumActivity</string>
     <string name="action_settings">Settings</string>
     <string name="photo_albums">Photo Albums</string>
     <string name="title_activity_trivia_game">TriviaGameActivity</string>
+    <string name="answer_text">Answer</string>
+
+    // Array for quiz
+    <string-array name="questions">
+        <item>How many temples were under construction at the time of camp?</item>
+        <item>14</item>
+        <item>5</item>
+        <item>36</item>
+        <item>17</item>
+
+        <item>Which direction does the Angel Moroni face?</item>
+        <item>East</item>
+        <item>North</item>
+        <item>South</item>
+        <item>West</item>
+
+        <item>Which Temple is Moroni facing West?</item>
+        <item>Seattle, WA</item>
+        <item>Vancouver, BC</item>
+        <item>St. Paul, MN</item>
+        <item>Copenhagen, Denmark</item>
+
+        <item>Which Temple is Moroni facing West?</item>
+        <item>Nauvoo, IL</item>
+        <item>Manti, UT</item>
+        <item>Phoenix, AZ</item>
+        <item>Tokyo, Japan</item>
+
+        <item>Which Temple is Moroni facing West?</item>
+        <item>Taipei, Taiwan</item>
+        <item>Chihuahua, Mexico</item>
+        <item>Oakland, CA</item>
+        <item>Vernal, UT</item>
+
+        <item>How many operating temples were there at the time of camp?</item>
+        <item>143</item>
+        <item>155</item>
+        <item>215</item>
+        <item>134</item>
+
+        <item>How many of the temples at the time of camp were in the United States?</item>
+        <item>86</item>
+        <item>80</item>
+        <item>94</item>
+        <item>77</item>
+
+        <item>How many of the 50 United States had an operating temple at the time of camp?</item>
+        <item>36</item>
+        <item>50</item>
+        <item>46</item>
+        <item>22</item>
+
+        <item>Which was the 100th operating temple?</item>
+        <item>Boston, MA</item>
+        <item>Ogden, UT</item>
+        <item>Laie, HI</item>
+        <item>Washington D.C.</item>
+
+        <item>Which Prophet dedicated the most temples?</item>
+        <item>Gordon B. Hinckley</item>
+        <item>Howard W. Hunter</item>
+        <item>David O. Mckay</item>
+        <item>Joseph Smith Jr.</item>
+
+        <item>In which temple was the first Endowment movie filmed?</item>
+        <item>Salt Lake City, UT</item>
+        <item>Bountiful, UT</item>
+        <item>Ogden, UT</item>
+        <item>Vernal, UT</item>
+
+        <item>Which temple is the smallest?</item>
+        <item>Chihuahua, Mexico</item>
+        <item>Brigham City, UT</item>
+        <item>Bismarck, ND</item>
+        <item>Bern, Switzerland</item>
+
+        <item>Which temple is the largest?</item>
+        <item>Salt Lake City, UT</item>
+        <item>Washington D.C.</item>
+        <item>Los Angeles, CA</item>
+        <item>Hong Kong, China</item>
+
+        <item>Which temple is the second largest?</item>
+        <item>Los Angeles, CA</item>
+        <item>Washington D.C.</item>
+        <item>Salt Lake City, UT</item>
+        <item>Hong Kong, China</item>
+
+        <item>Which temple is the tallest?</item>
+        <item>Washington D.C.</item>
+        <item>Manhattan, NY</item>
+        <item>Salt Lake City, UT</item>
+        <item>Los Angeles, CA</item>
+
+        <item>Should you get married in the temple?</item>
+        <item>Yes!</item>
+        <item>Maybe</item>
+        <item>I will think about it</item>
+        <item>No</item>
+
+        <item>Which was the first temple built in Asia?</item>
+        <item>Tokyo, Japan</item>
+        <item>Taipei, Taiwan</item>
+        <item>Hong Kong, China</item>
+        <item>Manila, Pillipines</item>
+
+        <item>Which temple is known as the Lamanite Temple?</item>
+        <item>Mesa, AZ</item>
+        <item>Lima, Peru</item>
+        <item>Montevideo, Uruguay</item>
+        <item>Sao Paulo, Brazil</item>
+
+        <item>Which was the first temple dedicated in the STATE of Utah?</item>
+        <item>Ogden</item>
+        <item>Salt Lake City</item>
+        <item>Provo</item>
+        <item>St. George</item>
+
+        <item>Which temple is the oldest temple still actively used today?</item>
+        <item>St. George, UT</item>
+        <item>Nauvoo, IL</item>
+        <item>Kirkland, OH</item>
+        <item>Salt Lake City, UT</item>
+        
+        <item>The site that the Manti temple was built on, known as the Manti Stone Quarry, was infested with what?</item>
+        <item>Rattlesnakes</item>
+        <item>Crickets</item>
+        <item>Mosquitos</item>
+        <item>Termites</item>
+
+        <item>What temple was originally constructed with a horizontal Angel Moroni?</item>
+        <item>Nauvoo, IL</item>
+        <item>Manti, UT</item>
+        <item>Kirkland, OH</item>
+        <item>Houston, TX</item>
+
+        <item>How many temples do not have an Angel Moroni?</item>
+        <item>8</item>
+        <item>5</item>
+        <item>4</item>
+        <item>6</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Laie, HI</item>
+        <item>St. Paul, MN</item>
+        <item>Washington D.C.</item>
+        <item>Columbia River, WA</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Cardston, Alberta Canada</item>
+        <item>Salt Lake City, UT</item>
+        <item>Taipei, Taiwan</item>
+        <item>Manhattan, NY</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Logan, UT</item>
+        <item>Vernal, UT</item>
+        <item>Hong Kong, China</item>
+        <item>Redlands, CA</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Manti, UT</item>
+        <item>Manhattan, NY</item>
+        <item>Vancouver, BC</item>
+        <item>Houston, TX</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Mesa, AZ</item>
+        <item>Spokane, WA</item>
+        <item>Reno, NV</item>
+        <item>Tokyo, Japan</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>St. George, UT</item>
+        <item>Medford, OR</item>
+        <item>Ogden, UT</item>
+        <item>Los Angeles, CA</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Oakland, CA</item>
+        <item>Reno, NV</item>
+        <item>St. Paul, MN</item>
+        <item>Washington D.C.</item>
+
+        <item>Which temple does not have an Angel Moroni?</item>
+        <item>Hamilton, New Zealand</item>
+        <item>Mexico City, Mexico</item>
+        <item>Lima, Peru</item>
+        <item>Montevideo, Uruguay</item>
+
+        <item>Which temple has the largest temple grounds?</item>
+        <item>Washington D.C.</item>
+        <item>Salt Lake City, UT</item>
+        <item>Billings, MT</item>
+        <item>Nauvoo, IL</item>
+
+        <item>Which temple is the only one dedicated by Lorenzo Snow?</item>
+        <item>Manti, UT</item>
+        <item>Logan, UT</item>
+        <item>Salt Lake City, UT</item>
+        <item>Vernal, UT</item>
+
+        <item>What was the first temple to be dedicated in a country where Christianity was not the predominant religion?</item>
+        <item>Tokyo, Japan</item>
+        <item>Taipei, Taiwan</item>
+        <item>Hong Kong, China</item>
+        <item>Manila, Phillipines</item>
+
+        <item>How many temples have an Angel Moroni holding the scriptures?</item>
+        <item>5</item>
+        <item>3</item>
+        <item>4</item>
+        <item>8</item>
+
+        <item>Which temple has Angel Moroni holding the scriptures?</item>
+        <item>Los Angeles, CA</item>
+        <item>Salt Lake City, U</item>T
+        <item>Draper, UT</item>
+        <item>San Diego, CA</item>
+
+        <item>Which temple has Angel Moroni holding the scriptures?</item>
+        <item>Washington D.C.</item>
+        <item>Oakland, CA</item>
+        <item>Manila, Phillipines</item>
+        <item>Hong Kong, China</item>
+
+        <item>Which temple has Angel Moroni holding the scriptures?</item>
+        <item>Seattle, WA</item>
+        <item>Chihuahua, Mexico</item>
+        <item>Bern, Switzerland</item>
+        <item>Copenhagen, Denmark</item>
+
+        <item>Which temple has Angel Moroni holding the scriptures?</item>
+        <item>Jordan River, UT</item>
+        <item>Logan, UT</item>
+        <item>Bismarck, ND</item>
+        <item>Monticello, UT</item>
+
+        <item>Which temple has Angel Moroni holding the scriptures?</item>
+        <item>Mexico City, Mexico</item>
+        <item>Vancouver, BC</item>
+        <item>Reno, NV</item>
+        <item>Kansas City, MO</item>
+
+        <item>Which was the only temple to have a white Angel Moroni when it was first built?</item>
+        <item>Monticello, UT</item>
+        <item>St. Louis, MO</item>
+        <item>Orlando, FL</item>
+        <item>Fresno, CA</item>
+
+        <item>How many temples did President Gordon B. Hinckley dedicate?</item>
+        <item>85</item>
+        <item>44</item>
+        <item>37</item>
+        <item>101</item>
+
+        <item>Which temple has the highest number of sealing rooms?</item>
+        <item>Jordan River, UT</item>
+        <item>Salt Lake City, UT</item>
+        <item>Washington D.C.</item>
+        <item>Los Angeles, CA</item>
+
+        <item>What temple sustained an earthquake at 8.5 that lofted the Angel Moroni's trumpet into an adjoining flower bed?</item>
+        <item>Santiago, Chile</item>
+        <item>Lima, Peru</item>
+        <item>Redlands, CA</item>
+        <item>Taipei, Taiwan</item>
+
+        <item>Which temple won an award for how many roses it has planted on the temple grounds?</item>
+        <item>Portland, OR</item>
+        <item>Seattle, WA</item>
+        <item>San Diego, CA</item>
+        <item>Ogden, UT</item>
+
+        <item>During the preparation of the site of which temple were several World War II concrete bunkers found?</item>
+        <item>Suva, Fiji</item>
+        <item>Manila, Phillipines</item>
+        <item>Paris, France</item>
+        <item>Frankfurt, Germany</item>
+
+        <item>Which was the first temple built outside the United States?</item>
+        <item>Cardston, Alberta Canada</item>
+        <item>Mexico City, Mexico</item>
+        <item>Bern, Switzerland</item>
+        <item>Vancouver, BC</item>
+
+        <item>What year was the Salt Lake Temple finished being built?</item>
+        <item>1893</item>
+        <item>1885</item>
+        <item>1904</item>
+        <item>1899</item>
+
+        <item>How many years had the church been organized when the Salt Lake Temple was dedicated?</item>
+        <item>65</item>
+        <item>44</item>
+        <item>89</item>
+        <item>52</item>
+
+        <item>Which prophet dedicated the Salt Lake Temple?</item>
+        <item>Wilfred Woodruff</item>
+        <item>Lorenzo Snow</item>
+        <item>Joseph F. Smith</item>
+        <item>John Taylor</item>
+
+        <item>Which temple's exterior finish was pulled from the quarries on the hill that it stands on?</item>
+        <item>Manti, UT</item>
+        <item>Salt Lake City, UT</item>
+        <item>Rome, Italy</item>
+        <item>Oquirrh Mountain, UT</item>
+
+        <item>Which temple had the largest number of people in attendance at its dedication in church history?</item>
+        <item>Bountiful, UT</item>
+        <item>Salt Lake City, UT</item>
+        <item>Jordan River, UT</item>
+        <item>Draper, UT</item>
+
+        <item>How many people were in attendance at the Bountiful Temple dedication?</item>
+        <item>201,655</item>
+        <item>151,444</item>
+        <item>226,890</item>
+        <item>55,000</item>
+
+        <item>How many temples were previously used as a different building and then converted to a temple?</item>
+        <item>2</item>
+        <item>3</item>
+        <item>19</item>
+        <item>5</item>
+
+        <item>Which temple was previously a different building and then converted to a temple?</item>
+        <item>Copenhagen, Denmark</item>
+        <item>Laie, HI</item>
+        <item>Manhattan, NY</item>
+        <item>Hong Kong, China</item>
+
+        <item>Which temple was previously a different building and then converted to a temple?</item>
+        <item>Vernal, UT</item>
+        <item>Manhattan, NY</item>
+        <item>Bismarck, ND</item>
+        <item>Manila, Phillipines</item>
+
+        <item>The Angel Moroni holding the trumpet to his mouth represents what?</item>
+        <item>The spreading of the Gospel</item>
+        <item>The joyous songs of the saints</item>
+        <item>The power of God expressed in music</item>
+        <item>The praises toward God sang in the temple</item>
+
+        <item>Which temple was the first one built to not have English as the main language?</item>
+        <item>Bern, Switzerland</item>
+        <item>Frankfurt, Germany</item>
+        <item>Madrid, Spain</item>
+        <item>Mexico City, Mexico</item>
+
+        <item>Which temple was the first one built in Europe?</item>
+        <item>Bern, Switzerland</item>
+        <item>Copenhagen, Denmark</item>
+        <item>Frankfurt, Germany</item>
+        <item>London, England</item>
+
+        <item>It took 120 years for the first 50 temples to be built. How long did it take for the next 50 temples to be built?</item>
+        <item>3</item>
+        <item>36</item>
+        <item>15</item>
+        <item>75</item>
+
+        <item>After the local mayor and his wife toured this temple, the mayor's wife said, "If heaven really exists, today I have visited a little piece of that heaven." Which temple is it?</item>
+        <item>Lima, Peru</item>
+        <item>Suva, Fiji</item>
+        <item>Bismarck, ND</item>
+        <item>Orlando, FL</item>
+
+        <item>Which temple did Martin Luther King Jr. tour during a special VIP tour conducted prior to its rededication?</item>
+        <item>Atlanta, GA</item>
+        <item>Orlando, FL</item>
+        <item>St. Louis, MO</item>
+        <item>Houston, TX</item>
+
+        <item>How many names were completed in Endowment sessions on the last day the Ogden temple was open in 2011 before the renovation began?</item>
+        <item>800</item>
+        <item>566</item>
+        <item>789</item>
+        <item>1023</item>
+
+        <item>Why did the prophet David O. Mckay say he felt prompted to build 2 more temples in Utah, which were the Ogden and Provo temples?</item>
+        <item>52% of all temple work in the world at the time was being done in 3 existing Utah temples</item>
+        <item>He wanted to have more temples to visit close by</item>
+        <item>There was a larger base of members in Utah</item>
+        <item>They didn't have anything else to do with tithing money</item>
+
+        <item>Which 2 temples became the first 2 temples ever to be dedicated on the same day?</item>
+        <item>Halifax, Nova Scotia &amp; Regina, Saskatchewan</item>
+        <item>Orlando, FL &amp; San Diego, CA</item>
+        <item>St. Paul, MN &amp; Bismarck, ND</item>
+        <item>Madrid, Spain &amp; Manila Phillipines</item>
+
+        <item>While this temple was being built, they ran out of lumber. Two days later a cargo ship was found stranded &amp; the captain of the ship told the Saints they could have the cargo which just happened to be lumber.</item>
+        <item>Laie, HI</item>
+        <item>Seattle, WA</item>
+        <item>Manila, Phillipines</item>
+        <item>Suva, Fiji</item>
+
+        <item>How many temples were dedicated in the year 2000?</item>
+        <item>33</item>
+        <item>12</item>
+        <item>6</item>
+        <item>3</item>
+
+        <item>How many temples were dedicated from 2002 - 2012?</item>
+        <item>32</item>
+        <item>64</item>
+        <item>15</item>
+        <item>9</item>
+
+        <item>What 3 temples somewhat resemble the ancient Solomon's Temple because they have no towers and spiers?</item>
+        <item>Laie, HI Temple, Carston, Alberta Canada Temple &amp; Mesa AZ Temple</item>
+        <item>Bern, Switzerland Temple, Madrid, Spain Temple &amp; Manhattan, NY Temple</item>
+        <item>Hong Kong China Temple, Laie, HI Temple &amp; Manhattan, NY Temple</item>
+        <item>Carston, Alberta Canada Temple, Bern Switzerland Temple &amp; Hong Kong, China Temple</item>
+    </string-array>
 
 </resources>
