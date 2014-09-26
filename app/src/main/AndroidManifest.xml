@@ -35,6 +35,10 @@
             android:name=".StudyGuideSelectActivity"
             android:label="@string/title_activity_study_guide_select" >
         </activity>
+        <activity
+            android:name=".TriviaGameActivity"
+            android:label="@string/title_activity_trivia_game" >
+        </activity>
     </application>
 
 </manifest>
