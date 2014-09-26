@@ -24,6 +24,8 @@
     <string name="photo_albums">Photo Albums</string>
     <string name="title_activity_trivia_game">TriviaGameActivity</string>
     <string name="answer_text">Answer</string>
+    <string name="score">Score: </string>
+    <string name="zero">0</string>
 
     // Array for quiz
     <string-array name="questions">
@@ -146,7 +148,7 @@
         <item>Nauvoo, IL</item>
         <item>Kirkland, OH</item>
         <item>Salt Lake City, UT</item>
-        
+
         <item>The site that the Manti temple was built on, known as the Manti Stone Quarry, was infested with what?</item>
         <item>Rattlesnakes</item>
         <item>Crickets</item>
@@ -285,7 +287,7 @@
         <item>Washington D.C.</item>
         <item>Los Angeles, CA</item>
 
-        <item>What temple sustained an earthquake at 8.5 that lofted the Angel Moroni's trumpet into an adjoining flower bed?</item>
+        <item>What temple sustained an earthquake at 8.5 that lofted the Angel Moroni\'s trumpet into an adjoining flower bed?</item>
         <item>Santiago, Chile</item>
         <item>Lima, Peru</item>
         <item>Redlands, CA</item>
@@ -327,7 +329,7 @@
         <item>Joseph F. Smith</item>
         <item>John Taylor</item>
 
-        <item>Which temple's exterior finish was pulled from the quarries on the hill that it stands on?</item>
+        <item>Which temple\'s exterior finish was pulled from the quarries on the hill that it stands on?</item>
         <item>Manti, UT</item>
         <item>Salt Lake City, UT</item>
         <item>Rome, Italy</item>
@@ -387,7 +389,7 @@
         <item>15</item>
         <item>75</item>
 
-        <item>After the local mayor and his wife toured this temple, the mayor's wife said, "If heaven really exists, today I have visited a little piece of that heaven." Which temple is it?</item>
+        <item>After the local mayor and his wife toured this temple, the mayor\'s wife said, "If heaven really exists, today I have visited a little piece of that heaven." Which temple is it?</item>
         <item>Lima, Peru</item>
         <item>Suva, Fiji</item>
         <item>Bismarck, ND</item>
@@ -409,7 +411,7 @@
         <item>52% of all temple work in the world at the time was being done in 3 existing Utah temples</item>
         <item>He wanted to have more temples to visit close by</item>
         <item>There was a larger base of members in Utah</item>
-        <item>They didn't have anything else to do with tithing money</item>
+        <item>They didn\'t have anything else to do with tithing money</item>
 
         <item>Which 2 temples became the first 2 temples ever to be dedicated on the same day?</item>
         <item>Halifax, Nova Scotia &amp; Regina, Saskatchewan</item>
@@ -429,13 +431,13 @@
         <item>6</item>
         <item>3</item>
 
-        <item>How many temples were dedicated from 2002 - 2012?</item>
+        <item>How many temples were dedicated from 2002 – 2012?</item>
         <item>32</item>
         <item>64</item>
         <item>15</item>
         <item>9</item>
 
-        <item>What 3 temples somewhat resemble the ancient Solomon's Temple because they have no towers and spiers?</item>
+        <item>What 3 temples somewhat resemble the ancient Solomon\'s Temple because they have no towers and spiers?</item>
         <item>Laie, HI Temple, Carston, Alberta Canada Temple &amp; Mesa AZ Temple</item>
         <item>Bern, Switzerland Temple, Madrid, Spain Temple &amp; Manhattan, NY Temple</item>
         <item>Hong Kong China Temple, Laie, HI Temple &amp; Manhattan, NY Temple</item>
