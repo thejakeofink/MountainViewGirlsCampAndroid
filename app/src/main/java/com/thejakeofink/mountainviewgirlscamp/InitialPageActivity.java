@@ -19,6 +19,7 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
         findViewById(R.id.btn_study_guides).setOnClickListener(this);
         findViewById(R.id.btn_pictures).setOnClickListener(this);
         findViewById(R.id.btn_quotes).setOnClickListener(this);
+        findViewById(R.id.btn_game).setOnClickListener(this);
     }
 
     @Override
@@ -39,6 +40,11 @@ public class InitialPageActivity extends Activity implements View.OnClickListene
                 Intent quotesIntent = new Intent(this, StudyGuideActivity.class);
                 quotesIntent.putExtra(StudyGuideActivity.KEY_FILE_TO_LOAD, StudyGuideActivity.QUOTES);
                 startActivity(quotesIntent);
+                break;
+            case R.id.btn_game:
+                // TODO: go to game...
+                Intent gameIntent = new Intent(this, TriviaGameActivity.class);
+                startActivity(gameIntent);
                 break;
         }
     }
