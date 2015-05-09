@@ -192,13 +192,19 @@ public class FlickrManager {
             if (uris.size() > 1) {
                 intent.setAction(Intent.ACTION_SEND_MULTIPLE);
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            } else {
+				sendShareIntent(context, intent);
+            } else if (uris.size() == 1){
                 intent.setAction(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+				sendShareIntent(context, intent);
             }
-            intent.setType("image/*");
-            context.startActivity(Intent.createChooser(intent, "Select App to Share"));
+
         }
+
+		private void sendShareIntent(Context context, Intent intent) {
+			intent.setType("image/*");
+			context.startActivity(Intent.createChooser(intent, "Select App to Share"));
+		}
     }
 
     public static class SearchFlickrForSetsTask extends AsyncTask<Object, ArrayList<Pair<String,String>>, ArrayList<Pair<String, String>>> {
