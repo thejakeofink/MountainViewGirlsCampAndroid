@@ -255,7 +255,7 @@ public class FlickrManager {
 
         private void updateUI(Handler handler, ArrayList<Pair<String, String>> albums) {
             if (handler != null) {
-                Message message = handler.obtainMessage(FlickrPhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
+                Message message = handler.obtainMessage(FlickrPhotoAlbumFragment.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
                 handler.sendMessage(message);
             }
         }

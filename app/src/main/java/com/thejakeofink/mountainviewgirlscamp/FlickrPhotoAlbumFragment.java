@@ -1,16 +1,14 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
-import android.app.Activity;
-import android.content.Context;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,8 +20,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener {
-    private static final String TAG = "FlickrPhotoAlbumActivity";
+public class FlickrPhotoAlbumFragment extends Fragment implements AdapterView.OnItemClickListener, InitialPageActivity.OnPageChanged {
+    private static final String TAG = "FlickrPhotoAlbumFragment";
     public static final int MESSAGE_UPDATE_FLICKR_ALBUMS = 0;
 
     AlbumAdapter albumAdapter;
@@ -42,12 +40,12 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
                         } else {
                             albumAdapter = new AlbumAdapter(thealbums);
                             albumGridView.setAdapter(albumAdapter);
-                            albumGridView.setOnItemClickListener(FlickrPhotoAlbumActivity.this);
+                            albumGridView.setOnItemClickListener(FlickrPhotoAlbumFragment.this);
                         }
 
                         albumAdapter.notifyDataSetChanged();
                     } else {
-                        Toast.makeText(FlickrPhotoAlbumActivity.this, "An Internet connection is required to view photos.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FlickrPhotoAlbumFragment.this.getActivity(), "An Internet connection is required to view photos.", Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -56,18 +54,27 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
 
     GridView albumGridView;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_flickr_photo_album);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View rootView = inflater.inflate(R.layout.activity_flickr_photo_album, container, false);
 
-        albumGridView = (GridView) findViewById(R.id.album_photo_grid);
+        albumGridView = (GridView) rootView.findViewById(R.id.album_photo_grid);
 
         albumGridView.setOnItemClickListener(this);
 
         loadAlbums();
 
-        getActionBar().setTitle(R.string.photo_albums);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar ab = getActivity().getActionBar();
+        if (ab != null) {
+            ab.setTitle(R.string.photo_albums);
+        }
     }
 
     public void loadAlbums() {
@@ -77,12 +84,22 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent photoAlbumIntent = new Intent(this, PhotoAlbumActivity.class);
+        Intent photoAlbumIntent = new Intent(this.getActivity(), PhotoAlbumActivity.class);
         photoAlbumIntent.putExtra(PhotoAlbumActivity.PHOTOSET_ID, "" + id);
         startActivity(photoAlbumIntent);
     }
 
-    class AlbumAdapter extends BaseAdapter {
+	@Override
+	public void onEnteringPage(InitialPageActivity activity) {
+
+	}
+
+	@Override
+	public void onLeavingPage(InitialPageActivity activity) {
+
+	}
+
+	class AlbumAdapter extends BaseAdapter {
 
         private String TAG = "AlbumAdapter";
 
@@ -126,7 +143,7 @@ public class FlickrPhotoAlbumActivity extends Activity implements AdapterView.On
             View v = convertView;
             if (v == null) {
                 // Need to create a view
-                LayoutInflater inflater = FlickrPhotoAlbumActivity.this.getLayoutInflater();
+                LayoutInflater inflater = FlickrPhotoAlbumFragment.this.getActivity().getLayoutInflater();
                 v = inflater.inflate(R.layout.grid_item_layout, parent,false);
             }
 
