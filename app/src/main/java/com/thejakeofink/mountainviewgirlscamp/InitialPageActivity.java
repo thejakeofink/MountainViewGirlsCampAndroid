@@ -78,7 +78,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
     public void onClick(View v) {
 //        switch (v.getId()) {
 //            case R.id.btn_study_guides:
-//                Intent studyIntent = new Intent(this, StudyGuideSelectActivity.class);
+//                Intent studyIntent = new Intent(this, StudyGuideSelectFragment.class);
 //                startActivity(studyIntent);
 //                break;
 //            case R.id.btn_pictures:

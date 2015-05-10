@@ -56,7 +56,7 @@ public class InitialPageAdapter extends FragmentPagerAdapter {
 			if (itemId == InitialPageActivity.PAGE_PHOTOS) {
 				frag = new FlickrPhotoAlbumFragment();
 			} else if (itemId == InitialPageActivity.PAGE_STUDY) {
-				//TODO: Add study fragment
+				frag = new StudyGuideSelectFragment();
 			} else if (itemId == InitialPageActivity.PAGE_QUOTES) {
 				//TODO: Add Quotes fragment
 			} else if (itemId == InitialPageActivity.PAGE_GAME) {

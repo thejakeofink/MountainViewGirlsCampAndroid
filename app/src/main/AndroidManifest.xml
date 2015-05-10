@@ -32,7 +32,7 @@
             android:label="@string/title_activity_study_guide" >
         </activity>
         <activity
-            android:name=".StudyGuideSelectActivity"
+            android:name=".StudyGuideSelectFragment"
             android:label="@string/title_activity_study_guide_select" >
         </activity>
         <activity
