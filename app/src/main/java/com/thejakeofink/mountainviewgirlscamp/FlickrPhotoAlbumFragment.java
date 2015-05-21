@@ -65,7 +65,7 @@ public class FlickrPhotoAlbumFragment extends Fragment implements AdapterView.On
 
         loadAlbums();
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return rootView;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class FlickrPhotoAlbumFragment extends Fragment implements AdapterView.On
         ArrayList<Pair<String, String>> albumIdsTitles;
 
         public AlbumAdapter() {
-            albumIdsTitles = new ArrayList<Pair<String, String>>();
+            albumIdsTitles = new ArrayList<>();
         }
 
         public AlbumAdapter(ArrayList<Pair<String, String>> albums) {
