@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Random;
 
 
+
 public class TriviaGameFragment extends Fragment implements View.OnClickListener {
 
     ArrayList<TriviaQuestion> quizLoader;
@@ -100,6 +101,12 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
         answer2.setText(currentQuestion.answers.get(1));
         answer3.setText(currentQuestion.answers.get(2));
         answer4.setText(currentQuestion.answers.get(3));
+
+
+		answer1.setBackgroundResource(R.color.answer_default);
+		answer2.setBackgroundResource(R.color.answer_default);
+		answer3.setBackgroundResource(R.color.answer_default);
+		answer4.setBackgroundResource(R.color.answer_default);
     }
 
     private void increaseScore() {
@@ -131,13 +138,15 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v instanceof Button) {
-            if (((Button) v).getText().equals(currentQuestion.correctAnswer)) {
+			Button b = (Button) v;
+            if (b.getText().equals(currentQuestion.correctAnswer)) {
                 if (mShareActionProvider == null) {
                     increaseScore();
                 }
+				b.setBackgroundResource(R.color.correct_answer_color);
                 loadNextQuestion();
             } else {
-                loadNextQuestion();
+                b.setBackgroundResource(R.color.wrong_answer_color);
             }
         }
     }

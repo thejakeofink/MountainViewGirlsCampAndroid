@@ -4,4 +4,7 @@
     <color name="list_divider">@android:color/white</color>
     <color name="list_select_white">@android:color/darker_gray</color>
     <color name="list_divider_white">@android:color/transparent</color>
+    <color name="correct_answer_color">#55F588</color>
+	<color name="wrong_answer_color">#FF0000</color>
+	<color name="answer_default">#FF55DD</color>
 </resources>

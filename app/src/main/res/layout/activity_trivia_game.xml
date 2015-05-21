@@ -41,6 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@color/answer_default"
         android:text="@string/answer_text" />
 
     <Button
@@ -48,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@color/answer_default"
         android:text="@string/answer_text" />
 
     <Button
@@ -55,6 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@color/answer_default"
         android:text="@string/answer_text" />
 
     <Button
@@ -62,6 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@color/answer_default"
         android:text="@string/answer_text" />
 
 </LinearLayout>
