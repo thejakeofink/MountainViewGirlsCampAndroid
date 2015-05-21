@@ -91,7 +91,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 //                startActivity(quotesIntent);
 //                break;
 //            case R.id.btn_game:
-//                Intent gameIntent = new Intent(this, TriviaGameActivity.class);
+//                Intent gameIntent = new Intent(this, TriviaGameFragment.class);
 //                startActivity(gameIntent);
 //                break;
 //        }

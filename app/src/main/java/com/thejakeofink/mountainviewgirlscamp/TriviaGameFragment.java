@@ -1,24 +1,25 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
 
-public class TriviaGameActivity extends Activity implements View.OnClickListener {
+public class TriviaGameFragment extends Fragment implements View.OnClickListener {
 
     ArrayList<TriviaQuestion> quizLoader;
     TriviaQuestion currentQuestion;
@@ -32,31 +33,39 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
     Button answer4;
 
     Menu menu;
+	MenuInflater menuInflater;
     ShareActionProvider mShareActionProvider;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        quizLoader = new ArrayList<TriviaQuestion>();
-        setContentView(R.layout.activity_trivia_game);
-
-        questionView = (TextView)findViewById(R.id.txv_question);
-        scoreView = (TextView)findViewById(R.id.txv_score);
-        answer1 = (Button)findViewById(R.id.btn_answer_one);
-        answer2 = (Button)findViewById(R.id.btn_answer_two);
-        answer3 = (Button)findViewById(R.id.btn_answer_three);
-        answer4 = (Button)findViewById(R.id.btn_answer_four);
-
-        answer1.setOnClickListener(this);
-        answer2.setOnClickListener(this);
-        answer3.setOnClickListener(this);
-        answer4.setOnClickListener(this);
-
-        loadQuiz();
-        loadFirstQuestion();
+        quizLoader = new ArrayList<>();
+		setHasOptionsMenu(true);
     }
 
-    private void loadQuiz() {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final View rootView = inflater.inflate(R.layout.activity_trivia_game, container, false);
+
+		questionView = (TextView)rootView.findViewById(R.id.txv_question);
+		scoreView = (TextView)rootView.findViewById(R.id.txv_score);
+		answer1 = (Button)rootView.findViewById(R.id.btn_answer_one);
+		answer2 = (Button)rootView.findViewById(R.id.btn_answer_two);
+		answer3 = (Button)rootView.findViewById(R.id.btn_answer_three);
+		answer4 = (Button)rootView.findViewById(R.id.btn_answer_four);
+
+		answer1.setOnClickListener(this);
+		answer2.setOnClickListener(this);
+		answer3.setOnClickListener(this);
+		answer4.setOnClickListener(this);
+
+		loadQuiz();
+		loadFirstQuestion();
+
+		return rootView;
+	}
+
+	private void loadQuiz() {
         String[] fromResource = getResources().getStringArray(R.array.questions);
 
         for (int i = 0; i < fromResource.length; i += 5) {
@@ -104,11 +113,11 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
             populateQuestion();
         } else {
             if (mShareActionProvider == null) {
-                getMenuInflater().inflate(R.menu.photo, menu);
+                menuInflater.inflate(R.menu.photo, menu);
 
                 MenuItem item = menu.findItem(R.id.menu_item_share);
 
-                mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+                mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
@@ -133,14 +142,12 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
         }
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
-        this.menu = menu;
-        return true;
-    }
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		this.menu = menu;
+		this.menuInflater = inflater;
+		super.onCreateOptionsMenu(menu, inflater);
+	}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -153,6 +160,7 @@ public class TriviaGameActivity extends Activity implements View.OnClickListener
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void setShareIntent(Intent shareIntent) {
         if (mShareActionProvider != null) {

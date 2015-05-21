@@ -36,7 +36,7 @@
             android:label="@string/title_activity_study_guide_select" >
         </activity>
         <activity
-            android:name=".TriviaGameActivity"
+            android:name=".TriviaGameFragment"
             android:label="@string/title_activity_trivia_game" >
         </activity>
     </application>

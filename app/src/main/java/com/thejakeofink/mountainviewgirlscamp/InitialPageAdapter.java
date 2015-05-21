@@ -58,9 +58,9 @@ public class InitialPageAdapter extends FragmentPagerAdapter {
 			} else if (itemId == InitialPageActivity.PAGE_STUDY) {
 				frag = new StudyGuideSelectFragment();
 			} else if (itemId == InitialPageActivity.PAGE_QUOTES) {
-				//TODO: Add Quotes fragment
+				frag = new Fragment();
 			} else if (itemId == InitialPageActivity.PAGE_GAME) {
-				//TODO: Add Game fragment
+				frag = new TriviaGameFragment();
 			}
 		}
 
