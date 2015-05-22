@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.ImageView;
 
 
 public class InitialPageActivity extends ActionBarActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.TabListener {
@@ -86,8 +87,8 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 //                startActivity(albumsIntent);
 //                break;
 //            case R.id.btn_quotes:
-//                Intent quotesIntent = new Intent(this, StudyGuideActivity.class);
-//                quotesIntent.putExtra(StudyGuideActivity.KEY_FILE_TO_LOAD, StudyGuideActivity.QUOTES);
+//                Intent quotesIntent = new Intent(this, StudyGuideFragment.class);
+//                quotesIntent.putExtra(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.QUOTES);
 //                startActivity(quotesIntent);
 //                break;
 //            case R.id.btn_game:

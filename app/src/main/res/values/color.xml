@@ -6,5 +6,6 @@
     <color name="list_divider_white">@android:color/transparent</color>
     <color name="correct_answer_color">#55F588</color>
 	<color name="wrong_answer_color">#FF0000</color>
-	<color name="answer_default">#FF55DD</color>
+	<color name="answer_default">#F7E9D0</color>
+    <color name="transparent_background">@android:color/transparent</color>
 </resources>

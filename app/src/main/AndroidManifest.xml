@@ -28,7 +28,7 @@
             android:label="@string/title_activity_photo" >
         </activity>
         <activity
-            android:name=".StudyGuideActivity"
+            android:name=".StudyGuideFragment"
             android:label="@string/title_activity_study_guide" >
         </activity>
         <activity

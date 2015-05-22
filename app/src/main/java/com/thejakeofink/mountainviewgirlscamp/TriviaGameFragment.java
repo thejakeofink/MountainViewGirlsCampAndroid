@@ -1,7 +1,9 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -25,6 +27,8 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
     ArrayList<TriviaQuestion> quizLoader;
     TriviaQuestion currentQuestion;
     int score;
+	boolean scoreAdded = false;
+	boolean questionQueued = false;
 
     TextView questionView;
     TextView scoreView;
@@ -110,8 +114,11 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
     }
 
     private void increaseScore() {
-        score += 5;
-        scoreView.setText("" + score);
+		if (!scoreAdded) {
+			score += 5;
+			scoreView.setText("" + score + " pts");
+			scoreAdded = true;
+		}
     }
 
     private void loadNextQuestion() {
@@ -124,15 +131,27 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
 
                 MenuItem item = menu.findItem(R.id.menu_item_share);
 
-                mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+//                mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+				mShareActionProvider = new ShareActionProvider(getActivity());
 
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_TEXT, "I just played the Mountain View Girls Camp Temple Trivia game and my score was " + score + "!!!");
                 intent.setType("text/plain");
-                setShareIntent(intent);
+                mShareActionProvider.setShareIntent(intent);
+
+				MenuItemCompat.setActionProvider(item, mShareActionProvider);
+
+				new AlertDialog.Builder(getActivity())
+						.setTitle("You Finished!")
+						.setMessage("Way to go! You got a score of: " + score + " pts")
+						.setPositiveButton(android.R.string.ok, null)
+						.create()
+						.show();
             }
         }
+		scoreAdded = false;
     }
 
     @Override
@@ -144,9 +163,22 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
                     increaseScore();
                 }
 				b.setBackgroundResource(R.color.correct_answer_color);
-                loadNextQuestion();
+
+				if (!questionQueued) {
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							loadNextQuestion();
+							questionQueued = false;
+						}
+					}, 1000);
+					questionQueued = true;
+				}
             } else {
-                b.setBackgroundResource(R.color.wrong_answer_color);
+				if (!scoreAdded) {
+					b.setBackgroundResource(R.color.wrong_answer_color);
+					scoreAdded = true;
+				}
             }
         }
     }
