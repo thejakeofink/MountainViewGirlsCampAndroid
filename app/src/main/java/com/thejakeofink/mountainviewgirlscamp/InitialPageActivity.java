@@ -12,8 +12,8 @@ import android.widget.ImageView;
 
 public class InitialPageActivity extends ActionBarActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.TabListener {
 
-	public static final int PAGE_PHOTOS = 0;
-	public static final int PAGE_STUDY = 1;
+	public static final int PAGE_STUDY = 0;
+	public static final int PAGE_PHOTOS = 1;
 	public static final int PAGE_QUOTES = 2;
 	public static final int PAGE_GAME = 3;
 	public static final int NUM_ITEMS = 4;
