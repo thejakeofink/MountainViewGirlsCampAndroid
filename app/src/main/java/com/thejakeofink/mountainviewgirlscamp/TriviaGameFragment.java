@@ -175,10 +175,8 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
 					questionQueued = true;
 				}
             } else {
-				if (!scoreAdded) {
-					b.setBackgroundResource(R.color.wrong_answer_color);
-					scoreAdded = true;
-				}
+				b.setBackgroundResource(R.color.wrong_answer_color);
+				scoreAdded = true;
             }
         }
     }
