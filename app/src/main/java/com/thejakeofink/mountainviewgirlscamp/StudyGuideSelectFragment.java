@@ -1,14 +1,17 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 public class StudyGuideSelectFragment extends Fragment implements View.OnClickListener {
+
+	private static final String FRAGMENT_TAG = "StudyFragmentTag";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -24,21 +27,29 @@ public class StudyGuideSelectFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        Intent studyIntent = new Intent(getActivity(), StudyGuideFragment.class);
+		Bundle studyBundle = new Bundle();
         switch (v.getId()) {
             case R.id.btn_rev:
-                studyIntent.putExtra(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.REVELATION);
+                studyBundle.putInt(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.REVELATION);
                 break;
             case R.id.btn_temptation:
-                studyIntent.putExtra(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.TEMPTATION);
+                studyBundle.putInt(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.TEMPTATION);
                 break;
             case R.id.btn_faith:
-                studyIntent.putExtra(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.FAITH);
+                studyBundle.putInt(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.FAITH);
                 break;
             case R.id.btn_theme:
-                studyIntent.putExtra(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.THEME);
+                studyBundle.putInt(StudyGuideFragment.KEY_FILE_TO_LOAD, StudyGuideFragment.THEME);
                 break;
         }
-        startActivity(studyIntent);
+
+		StudyGuideFragment frag = new StudyGuideFragment();
+		frag.setArguments(studyBundle);
+
+		FragmentManager fm = getFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.addToBackStack(FRAGMENT_TAG);
+		ft.add(R.id.study_guide_frag_container, frag, FRAGMENT_TAG);
+		ft.commit();
     }
 }
