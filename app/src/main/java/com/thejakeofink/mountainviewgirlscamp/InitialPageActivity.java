@@ -51,14 +51,14 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
 		ActionBar.Tab tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_gallery)
-				.setTag(PAGE_PHOTOS)
+				.setIcon(android.R.drawable.ic_menu_agenda)
+				.setTag(PAGE_STUDY)
 				.setTabListener(this);
 		actionBar.addTab(tab);
 
 		tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_agenda)
-				.setTag(PAGE_STUDY)
+				.setIcon(android.R.drawable.ic_menu_gallery)
+				.setTag(PAGE_PHOTOS)
 				.setTabListener(this);
 		actionBar.addTab(tab);
 
