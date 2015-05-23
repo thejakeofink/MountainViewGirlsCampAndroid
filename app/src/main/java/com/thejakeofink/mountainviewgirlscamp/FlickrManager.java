@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Jacob Stokes on 8/26/14.
@@ -207,7 +208,7 @@ public class FlickrManager {
 		}
     }
 
-    public static class SearchFlickrForSetsTask extends AsyncTask<Object, ArrayList<Pair<String,String>>, ArrayList<Pair<String, String>>> {
+    public static class SearchFlickrForSetsTask extends AsyncTask<Object, ArrayList<PhotoAlbum>, ArrayList<PhotoAlbum>> {
         private static String TAG = "SearchFlickrForSetsTask";
         String listURL;
         Handler handler;
@@ -218,9 +219,9 @@ public class FlickrManager {
         }
 
         @Override
-        protected ArrayList<Pair<String, String>> doInBackground(Object[] params) {
+        protected ArrayList<PhotoAlbum> doInBackground(Object[] params) {
             ByteArrayOutputStream baos = URLConnector.readBytes(listURL);
-            ArrayList<Pair<String, String>> albums = new ArrayList<Pair<String, String>>();
+            ArrayList<PhotoAlbum> albums = new ArrayList<>();
             if (baos != null) {
                 String json = baos.toString();
                 try {
@@ -238,12 +239,16 @@ public class FlickrManager {
                             String albumID;
                             albumID = tempObj.getString("id");
                             albumTitle = tempObj.getJSONObject("title").getString("_content");
-                            Pair<String, String> tempPair = new Pair<String, String>(albumID, albumTitle);
-                            albums.add(tempPair);
+							PhotoAlbum album = new PhotoAlbum();
+							album.id = albumID;
+							album.title = albumTitle;
 
-                            if (i < 5 || i % 5 == 0) {
-                                publishProgress(albums);
-                            }
+							FlickrPhoto preview = loadPhotoForAlbum(albumID);
+							album.img = loadImageForPhoto(preview, true);
+
+                            albums.add(album);
+
+							publishProgress(albums);
                         }
                     }
                 } catch (Exception e) {
@@ -253,7 +258,43 @@ public class FlickrManager {
             return albums;
         }
 
-        private void updateUI(Handler handler, ArrayList<Pair<String, String>> albums) {
+		private FlickrPhoto loadPhotoForAlbum(String albumID) {
+			FlickrPhoto flickrPhoto = new FlickrPhoto();
+			ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(albumID));
+			if (baos != null) {
+				String json = baos.toString();
+
+				try {
+					JSONObject root = new JSONObject(json);
+
+					String status = root.getString("stat");
+					if (status.equals("ok")) {
+
+						JSONObject photoset = root.getJSONObject("photoset");
+
+						JSONArray photos = photoset.getJSONArray("photo");
+
+						Random rand = new Random(System.nanoTime());
+
+						int randomNum = rand.nextInt(photos.length());
+
+						JSONObject jsonPhoto = photos.getJSONObject(randomNum);
+						flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+						flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+						flickrPhoto.secret = jsonPhoto.getString("secret");
+						flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+						flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+
+					}
+
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+			}
+			return flickrPhoto;
+		}
+
+        private void updateUI(Handler handler, ArrayList<PhotoAlbum> albums) {
             if (handler != null) {
                 Message message = handler.obtainMessage(FlickrPhotoAlbumFragment.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
                 handler.sendMessage(message);
@@ -261,12 +302,12 @@ public class FlickrManager {
         }
 
         @Override
-        protected void onProgressUpdate(ArrayList<Pair<String,String>>... values) {
+        protected void onProgressUpdate(ArrayList<PhotoAlbum>... values) {
             updateUI(handler, values[0]);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Pair<String, String>> pairs) {
+        protected void onPostExecute(ArrayList<PhotoAlbum> pairs) {
             updateUI(handler, pairs);
         }
     };
