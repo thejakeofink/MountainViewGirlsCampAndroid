@@ -107,10 +107,10 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
         answer4.setText(currentQuestion.answers.get(3));
 
 
-		answer1.setBackgroundResource(R.color.answer_default);
-		answer2.setBackgroundResource(R.color.answer_default);
-		answer3.setBackgroundResource(R.color.answer_default);
-		answer4.setBackgroundResource(R.color.answer_default);
+		answer1.setBackgroundResource(R.drawable.button_background);
+		answer2.setBackgroundResource(R.drawable.button_background);
+		answer3.setBackgroundResource(R.drawable.button_background);
+		answer4.setBackgroundResource(R.drawable.button_background);
     }
 
     private void increaseScore() {
@@ -162,7 +162,7 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
                 if (mShareActionProvider == null) {
                     increaseScore();
                 }
-				b.setBackgroundResource(R.color.correct_answer_color);
+				b.setBackgroundResource(R.drawable.button_correct);
 
 				if (!questionQueued) {
 					new Handler().postDelayed(new Runnable() {
@@ -175,7 +175,7 @@ public class TriviaGameFragment extends Fragment implements View.OnClickListener
 					questionQueued = true;
 				}
             } else {
-				b.setBackgroundResource(R.color.wrong_answer_color);
+				b.setBackgroundResource(R.drawable.button_wrong);
 				scoreAdded = true;
             }
         }
