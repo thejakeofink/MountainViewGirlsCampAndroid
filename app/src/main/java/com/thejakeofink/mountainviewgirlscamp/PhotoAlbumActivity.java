@@ -26,7 +26,6 @@ import java.util.ArrayList;
 public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemClickListener, ActionMode.Callback {
     private static final String TAG = "PhotoAlbumActivity";
     public static final String PHOTOSET_ID = "photosetID";
-    public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 0;
 
     PhotoAdapter photoAdapter;
     GridView photoGridView;
@@ -38,7 +37,7 @@ public class PhotoAlbumActivity extends Activity implements AdapterView.OnItemCl
         @Override
         public void handleMessage(Message message) {
             switch (message.what) {
-                case MESSAGE_UPDATE_FLICKR_PHOTOS:
+                case FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS:
                     Pair<String, ArrayList<FlickrPhoto>> titlePhotos = (Pair<String, ArrayList<FlickrPhoto>>) message.obj;
                     ArrayList<FlickrPhoto> thePhotos = titlePhotos.second;
                     String title = titlePhotos.first;

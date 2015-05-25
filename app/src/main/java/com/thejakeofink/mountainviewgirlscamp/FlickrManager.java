@@ -28,6 +28,11 @@ import java.util.Random;
  * Created by Jacob Stokes on 8/26/14.
  */
 public class FlickrManager {
+
+
+	public static final int MESSAGE_UPDATE_FLICKR_ALBUMS = 0;
+	public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 1;
+
     public static final String TAG = "FlickrManager";
     public static String flickrAPIKey = "f3b34fa4324967a8e889ae3c815c84a9";
     public static String userID = "125836065@N02";
@@ -56,6 +61,7 @@ public class FlickrManager {
         Handler handler;
         String photosURL;
         String albumTitle = "";
+		PhotoAlbum photoAlbum;
 
         public void destroy() {
             failFast = true;
@@ -67,52 +73,67 @@ public class FlickrManager {
             failFast = false;
         }
 
+		public RetrievePhotosTask(PhotoAlbum album, Handler handler) {
+			photoAlbum = album;
+			this.handler = handler;
+			failFast = false;
+		}
+
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object[] params) {
-            ArrayList<FlickrPhoto> albumPhotos = new ArrayList<FlickrPhoto>();
+            ArrayList<FlickrPhoto> albumPhotos = new ArrayList<>();
             if (failFast) return albumPhotos;
-            ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
-            if (baos != null) {
-                String json = baos.toString();
+			JSONArray photos = null;
+			if (photoAlbum == null) {
+				ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
+				if (baos != null) {
+					String json = baos.toString();
 
-                try {
-                    JSONObject root = new JSONObject(json);
+					try {
+						JSONObject root = new JSONObject(json);
 
-                    String status = root.getString("stat");
-                    if (status.equals("ok")) {
+						String status = root.getString("stat");
+						if (status.equals("ok")) {
 
-                        JSONObject photoset = root.getJSONObject("photoset");
+							JSONObject photoset = root.getJSONObject("photoset");
 
-                        albumTitle = photoset.getString("title");
+							albumTitle = photoset.getString("title");
 
-                        JSONArray photos = photoset.getJSONArray("photo");
+							photos = photoset.getJSONArray("photo");
+						}
+					} catch (Exception e) {
+						Log.e(TAG, e.getMessage());
+					}
+				}
+			} else {
+				photos = photoAlbum.photoData;
+			}
+			if (photos != null) {
+				try {
+					for (int i = 0; i < photos.length() && !failFast; i++) {
+						JSONObject jsonPhoto = photos.getJSONObject(i);
+						FlickrPhoto flickrPhoto = new FlickrPhoto();
+						flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+						flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+						flickrPhoto.secret = jsonPhoto.getString("secret");
+						flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+						flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+						albumPhotos.add(flickrPhoto);
+						if (i < 5 || i % 5 == 0) {
+							publishProgress(albumPhotos);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 
-                        for (int i = 0; i < photos.length() && !failFast; i++) {
-                            JSONObject jsonPhoto = photos.getJSONObject(i);
-                            FlickrPhoto flickrPhoto = new FlickrPhoto();
-                            flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
-                            flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
-                            flickrPhoto.secret = jsonPhoto.getString("secret");
-                            flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
-                            flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
-                            albumPhotos.add(flickrPhoto);
-                            if (i < 5 || i % 5 == 0) {
-                                publishProgress(albumPhotos);
-                            }
-                        }
-                    }
-
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
             return albumPhotos;
         }
 
         private void updateAlbumActivity(Handler handler, ArrayList<FlickrPhoto> flickrPhotos) {
             if (handler != null) {
-                Pair<String, ArrayList<FlickrPhoto>> titlePhotos = new Pair<String, ArrayList<FlickrPhoto>>(albumTitle, flickrPhotos);
-                Message message = handler.obtainMessage(PhotoAlbumActivity.MESSAGE_UPDATE_FLICKR_PHOTOS, titlePhotos);
+                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS, flickrPhotos);
                 handler.sendMessage(message);
             }
         }
@@ -242,8 +263,10 @@ public class FlickrManager {
 							PhotoAlbum album = new PhotoAlbum();
 							album.id = albumID;
 							album.title = albumTitle;
+							
+							loadPhotoDataInAlbum(album);
 
-							FlickrPhoto preview = loadPhotoForAlbum(albumID);
+							FlickrPhoto preview = loadPhotoForAlbum(album);
 							album.img = loadImageForPhoto(preview, true);
 
                             albums.add(album);
@@ -258,9 +281,8 @@ public class FlickrManager {
             return albums;
         }
 
-		private FlickrPhoto loadPhotoForAlbum(String albumID) {
-			FlickrPhoto flickrPhoto = new FlickrPhoto();
-			ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(albumID));
+		private void loadPhotoDataInAlbum (PhotoAlbum album) {
+			ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(album.id));
 			if (baos != null) {
 				String json = baos.toString();
 
@@ -274,29 +296,39 @@ public class FlickrManager {
 
 						JSONArray photos = photoset.getJSONArray("photo");
 
-						Random rand = new Random(System.nanoTime());
-
-						int randomNum = rand.nextInt(photos.length());
-
-						JSONObject jsonPhoto = photos.getJSONObject(randomNum);
-						flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
-						flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
-						flickrPhoto.secret = jsonPhoto.getString("secret");
-						flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
-						flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
-
+						album.photoData = photos;
 					}
 
 				} catch (Exception e) {
-					Log.e(TAG, e.getMessage());
+					e.printStackTrace();
 				}
+			}
+		}
+
+		private FlickrPhoto loadPhotoForAlbum(PhotoAlbum album) {
+			FlickrPhoto flickrPhoto = new FlickrPhoto();
+
+			JSONArray photos = album.photoData;
+
+			Random rand = new Random(System.nanoTime());
+
+			int randomNum = rand.nextInt(photos.length());
+			try {
+				JSONObject jsonPhoto = photos.getJSONObject(randomNum);
+				flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+				flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+				flickrPhoto.secret = jsonPhoto.getString("secret");
+				flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+				flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return flickrPhoto;
 		}
 
         private void updateUI(Handler handler, ArrayList<PhotoAlbum> albums) {
             if (handler != null) {
-                Message message = handler.obtainMessage(FlickrPhotoAlbumFragment.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
+                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
                 handler.sendMessage(message);
             }
         }

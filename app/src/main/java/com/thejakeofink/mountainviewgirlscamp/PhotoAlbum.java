@@ -2,6 +2,8 @@ package com.thejakeofink.mountainviewgirlscamp;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 /**
@@ -11,4 +13,5 @@ public class PhotoAlbum {
 	protected String id;
 	protected String title;
 	protected Bitmap img;
+	protected JSONArray photoData;
 }
