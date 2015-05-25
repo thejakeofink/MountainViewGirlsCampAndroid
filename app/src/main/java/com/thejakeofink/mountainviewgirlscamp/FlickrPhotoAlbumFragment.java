@@ -1,5 +1,6 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,13 +66,30 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 					}
 
 				break;
+
+				case InitialPageActivity.MESSAGE_BACK_PRESSED:
+					if (albumRecyclerView.getAdapter() instanceof PhotoAdapter) {
+						albumRecyclerView.setAdapter(albumAdapter);
+					} else {
+						getActivity().finish();
+					}
+					break;
             }
         }
     };
 
     RecyclerView albumRecyclerView;
 
-    @Nullable
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		if (activity instanceof InitialPageActivity) {
+			((InitialPageActivity) activity).registerFragmentHandler(mHandler);
+		}
+	}
+
+	@Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.activity_flickr_photo_album, container, false);

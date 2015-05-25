@@ -1,6 +1,8 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -8,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.ImageView;
+
+import java.util.ArrayList;
 
 
 public class InitialPageActivity extends ActionBarActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.TabListener {
@@ -17,15 +21,19 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 	public static final int PAGE_QUOTES = 2;
 	public static final int PAGE_GAME = 3;
 	public static final int NUM_ITEMS = 4;
+
+	public static final int MESSAGE_BACK_PRESSED = 1000;
 	private static int CURRENT_VISIBLE_FRAGMENT = 0;
 	ViewPager awesomePager;
 	ActionBar actionBar;
 	InitialPageAdapter awesomeAdapter;
+	ArrayList<Handler> fragmentHandlers;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.initial_view_pager);
+		fragmentHandlers = new ArrayList<>();
 
 		setupActionBar();
 
@@ -152,5 +160,20 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 	@Override
 	public void onPageScrollStateChanged(int state) {
 
+	}
+
+	public void registerFragmentHandler(Handler handler) {
+		fragmentHandlers.add(handler);
+	}
+
+	private void sendMessageToHandlers(Message message) {
+		for (Handler h : fragmentHandlers) {
+			h.sendMessage(message);
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		sendMessageToHandlers(Message.obtain(null, MESSAGE_BACK_PRESSED));
 	}
 }
