@@ -6,11 +6,11 @@
 .idea/compiler.xml
 .idea/encodings.xml
 .idea/gradle.xml
-.idea/libraries/appcompat_v7_v21_0_3.xml
-.idea/libraries/cardview_v7_21_03.xml
-.idea/libraries/recyclerview_v7_v21_0_3.xml
-.idea/libraries/support_annotations_v7_v21_0_3.xml
-.idea/libraries/support_v7_v21_0_3.xml
+.idea/libraries/appcompat_v7_21_0_3.xml
+.idea/libraries/cardview_v7_21_0_3.xml
+.idea/libraries/recyclerview_v7_21_0_3.xml
+.idea/libraries/support_annotations_21_0_3.xml
+.idea/libraries/support_v4_21_0_3.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/scopes/scope_settings.xml
