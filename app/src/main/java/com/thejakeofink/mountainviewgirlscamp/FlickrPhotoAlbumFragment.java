@@ -60,6 +60,10 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 							albumRecyclerView.setAdapter(photoAdapter);
 						}
 
+						if (albumRecyclerView.getAdapter() instanceof AlbumAdapter) {
+							albumRecyclerView.setAdapter(photoAdapter);
+						}
+
 						photoAdapter.notifyDataSetChanged();
 					} else {
 						Toast.makeText(FlickrPhotoAlbumFragment.this.getActivity(), "Unable to load photo data try again later.", Toast.LENGTH_SHORT).show();
@@ -155,6 +159,8 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 					holder.vText.setText(album.title);
 				}
 			}
+
+			holder.setOnClickListener();
 		}
 
         public void clear() {
@@ -183,14 +189,14 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 		protected TextView vText;
 		protected Object albumOrImage;
 		protected Handler handler;
+		protected View mItemView;
 
 		public ImageViewHolder(View itemView) {
 			super(itemView);
-
+			mItemView = itemView;
 			vImage = (ImageView) itemView.findViewById(R.id.album_image);
 			vText = (TextView) itemView.findViewById(R.id.album_title);
 
-			itemView.setOnClickListener(this);
 		}
 
 		@Override
@@ -199,6 +205,12 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 				loadPhotosForPhotoset((PhotoAlbum)albumOrImage);
 			} else if (albumOrImage instanceof FlickrPhoto) {
 				Toast.makeText(v.getContext(), "You clicked a photo!", Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		public void setOnClickListener() {
+			if (mItemView != null) {
+				mItemView.setOnClickListener(this);
 			}
 		}
 
@@ -238,6 +250,8 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 					holder.vText.setText("");
 				}
 			}
+
+			holder.setOnClickListener();
 		}
 
 		public void clear() {
