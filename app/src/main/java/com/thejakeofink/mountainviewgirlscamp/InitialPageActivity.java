@@ -22,18 +22,15 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 	public static final int PAGE_GAME = 3;
 	public static final int NUM_ITEMS = 4;
 
-	public static final int MESSAGE_BACK_PRESSED = 1000;
 	private static int CURRENT_VISIBLE_FRAGMENT = 0;
 	ViewPager awesomePager;
 	ActionBar actionBar;
 	InitialPageAdapter awesomeAdapter;
-	ArrayList<Handler> fragmentHandlers;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.initial_view_pager);
-		fragmentHandlers = new ArrayList<>();
 
 		setupActionBar();
 
@@ -162,18 +159,15 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 
 	}
 
-	public void registerFragmentHandler(Handler handler) {
-		fragmentHandlers.add(handler);
-	}
-
-	private void sendMessageToHandlers(Message message) {
-		for (Handler h : fragmentHandlers) {
-			h.sendMessage(message);
-		}
-	}
-
 	@Override
 	public void onBackPressed() {
-		sendMessageToHandlers(Message.obtain(null, MESSAGE_BACK_PRESSED));
+
+		FlickrPhotoAlbumFragment frag = (FlickrPhotoAlbumFragment)getSupportFragmentManager().findFragmentByTag(InitialPageAdapter.makeFragmentName(InitialPageActivity.PAGE_PHOTOS));
+
+		if (frag.albumRecyclerView.getAdapter() instanceof FlickrPhotoAlbumFragment.PhotoAdapter && awesomePager.getCurrentItem() == PAGE_PHOTOS) {
+			frag.albumRecyclerView.setAdapter(frag.albumAdapter);
+		} else {
+			super.onBackPressed();
+		}
 	}
 }

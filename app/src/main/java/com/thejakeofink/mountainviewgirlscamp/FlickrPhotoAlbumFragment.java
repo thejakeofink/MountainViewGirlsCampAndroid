@@ -70,14 +70,6 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 					}
 
 				break;
-
-				case InitialPageActivity.MESSAGE_BACK_PRESSED:
-					if (albumRecyclerView.getAdapter() instanceof PhotoAdapter) {
-						albumRecyclerView.setAdapter(albumAdapter);
-					} else {
-						getActivity().finish();
-					}
-					break;
             }
         }
     };
@@ -87,10 +79,6 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-
-		if (activity instanceof InitialPageActivity) {
-			((InitialPageActivity) activity).registerFragmentHandler(mHandler);
-		}
 	}
 
 	@Nullable
