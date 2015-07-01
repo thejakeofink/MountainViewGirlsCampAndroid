@@ -49,6 +49,7 @@ public class StudyGuideSelectFragment extends Fragment implements View.OnClickLi
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		ft.addToBackStack(FRAGMENT_TAG);
+        ft.setCustomAnimations(R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom, R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_bottom);
 		ft.add(R.id.study_guide_frag_container, frag, FRAGMENT_TAG);
 		ft.commit();
     }
