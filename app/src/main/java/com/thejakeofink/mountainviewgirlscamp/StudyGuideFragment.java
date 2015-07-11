@@ -95,8 +95,8 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
                     titleId = R.string.tempation;
                     break;
                 case THEME:
-                    headerId = R.array.faith_friendships_topics;
-                    paragraphId = R.array.faith_friendships_body;
+                    headerId = R.array.theme_topics;
+                    paragraphId = R.array.theme_body;
                     titleId = R.string.theme;
                     theme = context.getResources().getString(R.string.actual_theme);
                     isTheme = true;
