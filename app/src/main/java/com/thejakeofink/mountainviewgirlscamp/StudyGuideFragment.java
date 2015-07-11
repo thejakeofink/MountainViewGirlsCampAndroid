@@ -81,13 +81,13 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
                     titleId = R.string.faith_friendships;
                     break;
                 case REVELATION:
-                    headerId = R.array.faith_friendships_topics;
-                    paragraphId = R.array.faith_friendships_body;
+                    headerId = R.array.personal_rev_topics;
+                    paragraphId = R.array.personal_rev_body;
                     titleId = R.string.personal_rev;
                     break;
                 case TEMPTATION:
-                    headerId = R.array.faith_friendships_topics;
-                    paragraphId = R.array.faith_friendships_body;
+                    headerId = R.array.temptation_topics;
+                    paragraphId = R.array.temptation_body;
                     titleId = R.string.tempation;
                     break;
                 case THEME:
@@ -132,8 +132,8 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
         @Override
         public void onBindViewHolder(ImageViewHolder holder, int position) {
             if (holder.viewType == STANDARD_ITEM) {
-                holder.vTitle.setText(headers[position]);
-                holder.vBody.setText(paragraphs[position]);
+                holder.vTitle.setText(headers[position - 1]);
+                holder.vBody.setText(paragraphs[position - 1]);
             } else {
                 holder.vTitle.setText(title);
             }
@@ -141,7 +141,7 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
 
         @Override
         public int getItemCount() {
-            return headers.length;
+            return headers.length + 1;
         }
     }
 
