@@ -1,17 +1,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/answer_default">
 
-	<Button
-		android:id="@+id/btn_study_done"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/action_done"/>
+    <Button
+        android:id="@+id/btn_study_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_done"/>
 
-	<WebView
-		android:layout_below="@id/btn_study_done"
-		android:id="@+id/wbv_study_guide"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/study_guide_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_study_done"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:orientation="vertical"/>
 
 </RelativeLayout>

@@ -1,12 +1,15 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class StudyGuideFragment extends Fragment implements View.OnClickListener {
@@ -17,47 +20,148 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
     public static final int THEME = 4;
     public static final String KEY_FILE_TO_LOAD = "fileToLoad";
 
-    WebView studyGuideView;
-	Button studyDone;
+    protected static int HEADER_ITEM = 0;
+    protected static int STANDARD_ITEM = 1;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		final View rootView = inflater.inflate(R.layout.activity_study_guide, container, false);
+    Button studyDone;
+    RecyclerView contentView;
 
-		studyGuideView = (WebView) rootView.findViewById(R.id.wbv_study_guide);
-		studyDone = (Button) rootView.findViewById(R.id.btn_study_done);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        final View rootView = inflater.inflate(R.layout.activity_study_guide, container, false);
 
-		studyDone.setOnClickListener(this);
+        studyDone = (Button) rootView.findViewById(R.id.btn_study_done);
+        contentView = (RecyclerView) rootView.findViewById(R.id.study_guide_content);
 
-		Bundle bundle = getArguments();
+        contentView.setHasFixedSize(false);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        contentView.setLayoutManager(llm);
 
-		if (bundle != null) {
-            switch (bundle.getInt(KEY_FILE_TO_LOAD)) {
+        studyDone.setOnClickListener(this);
+
+        StudyGuideAdapter adapter;
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            adapter = new StudyGuideAdapter(getActivity(), bundle.containsKey(KEY_FILE_TO_LOAD) ? bundle.getInt(KEY_FILE_TO_LOAD) : 0);
+        } else {
+            adapter = new StudyGuideAdapter(getActivity(), 0);
+            studyDone.setVisibility(View.GONE);
+        }
+
+        contentView.setAdapter(adapter);
+
+        return rootView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == studyDone) {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    public class StudyGuideAdapter extends RecyclerView.Adapter<StudyGuideFragment.ImageViewHolder> {
+
+        String[] headers;
+        String[] paragraphs;
+        String title;
+
+        public StudyGuideAdapter(Context context, int studyGuideId) {
+
+            int headerId;
+            int paragraphId;
+            int titleId;
+
+            switch (studyGuideId) {
                 case FAITH:
-                    studyGuideView.loadUrl("file:///android_asset/FaithFriendshipsStudyGuide.htm");
+                    headerId = R.array.faith_friendships_topics;
+                    paragraphId = R.array.faith_friendships_body;
+                    titleId = R.string.faith_friendships;
                     break;
                 case REVELATION:
-                    studyGuideView.loadUrl("file:///android_asset/PersonalRevelationTempleStudyGuide.htm");
+                    headerId = R.array.faith_friendships_topics;
+                    paragraphId = R.array.faith_friendships_body;
+                    titleId = R.string.personal_rev;
                     break;
                 case TEMPTATION:
-                    studyGuideView.loadUrl("file:///android_asset/TemptationStudyGuide.htm");
+                    headerId = R.array.faith_friendships_topics;
+                    paragraphId = R.array.faith_friendships_body;
+                    titleId = R.string.tempation;
                     break;
                 case THEME:
-                    studyGuideView.loadUrl("file:///android_asset/YoungWomenThemeStudyGuide.htm");
+                    headerId = R.array.faith_friendships_topics;
+                    paragraphId = R.array.faith_friendships_body;
+                    titleId = R.string.theme;
+                    break;
+                default:
+                    headerId = R.array.faith_friendships_topics;
+                    paragraphId = R.array.faith_friendships_body;
+                    titleId = R.string.quotes;
                     break;
             }
-        } else {
-			studyGuideView.loadUrl("file:///android_asset/Temple Spotlight.htm");
-			studyDone.setVisibility(View.GONE);
-		}
 
-		return rootView;
-	}
 
-	@Override
-	public void onClick(View v) {
-		if (v == studyDone) {
-			getFragmentManager().popBackStack();
-		}
-	}
+            headers = context.getResources().getStringArray(headerId);
+            paragraphs = context.getResources().getStringArray(paragraphId);
+            title = context.getResources().getString(titleId);
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return HEADER_ITEM;
+            }
+            return STANDARD_ITEM;
+        }
+
+        @Override
+        public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v;
+
+            if (viewType == HEADER_ITEM) {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_guide_title_item, parent, false);
+            } else {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_item, parent, false);
+            }
+
+            return new ImageViewHolder(v, viewType);
+        }
+
+        @Override
+        public void onBindViewHolder(ImageViewHolder holder, int position) {
+            if (holder.viewType == STANDARD_ITEM) {
+                holder.vTitle.setText(headers[position]);
+                holder.vBody.setText(paragraphs[position]);
+            } else {
+                holder.vTitle.setText(title);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return headers.length;
+        }
+    }
+
+    public static class ImageViewHolder extends RecyclerView.ViewHolder {
+        protected TextView vTitle;
+        protected TextView vBody;
+        protected View itemView;
+        protected int viewType;
+
+        public ImageViewHolder(View itemView, int viewType) {
+            super(itemView);
+            this.itemView = itemView;
+            this.viewType = viewType;
+            if (viewType == STANDARD_ITEM) {
+                vTitle = (TextView) itemView.findViewById(R.id.tv_guide_header);
+                vBody = (TextView) itemView.findViewById(R.id.tv_study_guide);
+            } else {
+                vTitle = (TextView) itemView.findViewById(R.id.tv_guide_title);
+                vBody = null;
+            }
+        }
+    }
 }
