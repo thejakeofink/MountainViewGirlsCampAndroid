@@ -96,8 +96,8 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
                     titleId = R.string.theme;
                     break;
                 default:
-                    headerId = R.array.faith_friendships_topics;
-                    paragraphId = R.array.faith_friendships_body;
+                    headerId = R.array.quotes_topics;
+                    paragraphId = R.array.quotes_body;
                     titleId = R.string.quotes;
                     break;
             }
