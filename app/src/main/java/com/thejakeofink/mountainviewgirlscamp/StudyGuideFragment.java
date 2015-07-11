@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,9 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
     public static final int THEME = 4;
     public static final String KEY_FILE_TO_LOAD = "fileToLoad";
 
-    protected static int HEADER_ITEM = 0;
-    protected static int STANDARD_ITEM = 1;
+    protected static final int HEADER_ITEM = 0;
+    protected static final int THEME_HEADER_ITEM = 1;
+    protected static final int STANDARD_ITEM = 2;
 
     Button studyDone;
     RecyclerView contentView;
@@ -67,6 +69,8 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
         String[] headers;
         String[] paragraphs;
         String title;
+        String theme;
+        boolean isTheme = false;
 
         public StudyGuideAdapter(Context context, int studyGuideId) {
 
@@ -94,6 +98,8 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
                     headerId = R.array.faith_friendships_topics;
                     paragraphId = R.array.faith_friendships_body;
                     titleId = R.string.theme;
+                    theme = context.getResources().getString(R.string.actual_theme);
+                    isTheme = true;
                     break;
                 default:
                     headerId = R.array.quotes_topics;
@@ -111,6 +117,9 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
         @Override
         public int getItemViewType(int position) {
             if (position == 0) {
+                if (isTheme) {
+                    return THEME_HEADER_ITEM;
+                }
                 return HEADER_ITEM;
             }
             return STANDARD_ITEM;
@@ -120,10 +129,17 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
         public ImageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v;
 
-            if (viewType == HEADER_ITEM) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_guide_title_item, parent, false);
-            } else {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_item, parent, false);
+            switch (viewType) {
+                case HEADER_ITEM:
+                    v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_guide_title_item, parent, false);
+                    break;
+                case THEME_HEADER_ITEM:
+                    v = LayoutInflater.from(parent.getContext()).inflate(R.layout.theme_header_item, parent, false);
+                    break;
+                case STANDARD_ITEM:
+                default:
+                    v = LayoutInflater.from(parent.getContext()).inflate(R.layout.study_item, parent, false);
+                    break;
             }
 
             return new ImageViewHolder(v, viewType);
@@ -131,11 +147,18 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
 
         @Override
         public void onBindViewHolder(ImageViewHolder holder, int position) {
-            if (holder.viewType == STANDARD_ITEM) {
-                holder.vTitle.setText(headers[position - 1]);
-                holder.vBody.setText(paragraphs[position - 1]);
-            } else {
-                holder.vTitle.setText(title);
+
+            switch (holder.viewType) {
+                case THEME_HEADER_ITEM:
+                    holder.vBody.setText(Html.fromHtml(theme), TextView.BufferType.SPANNABLE);
+                case HEADER_ITEM:
+                    holder.vTitle.setText(title);
+                    break;
+                case STANDARD_ITEM:
+                default:
+                    holder.vTitle.setText(headers[position - 1]);
+                    holder.vBody.setText(paragraphs[position - 1]);
+                    break;
             }
         }
 
@@ -155,12 +178,21 @@ public class StudyGuideFragment extends Fragment implements View.OnClickListener
             super(itemView);
             this.itemView = itemView;
             this.viewType = viewType;
-            if (viewType == STANDARD_ITEM) {
-                vTitle = (TextView) itemView.findViewById(R.id.tv_guide_header);
-                vBody = (TextView) itemView.findViewById(R.id.tv_study_guide);
-            } else {
-                vTitle = (TextView) itemView.findViewById(R.id.tv_guide_title);
-                vBody = null;
+
+            switch (viewType) {
+                case HEADER_ITEM:
+                    vTitle = (TextView) itemView.findViewById(R.id.tv_guide_title);
+                    vBody = null;
+                    break;
+                case THEME_HEADER_ITEM:
+                    vTitle = (TextView) itemView.findViewById(R.id.tv_theme_title);
+                    vBody = (TextView) itemView.findViewById(R.id.tv_actual_theme);
+                    break;
+                case STANDARD_ITEM:
+                default:
+                    vTitle = (TextView) itemView.findViewById(R.id.tv_guide_header);
+                    vBody = (TextView) itemView.findViewById(R.id.tv_study_guide);
+                    break;
             }
         }
     }
