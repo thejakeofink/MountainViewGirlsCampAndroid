@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -16,69 +17,71 @@ import java.util.ArrayList;
 
 public class InitialPageActivity extends ActionBarActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.TabListener {
 
-	public static final int PAGE_STUDY = 0;
-	public static final int PAGE_PHOTOS = 1;
-	public static final int PAGE_QUOTES = 2;
-	public static final int PAGE_GAME = 3;
-	public static final int NUM_ITEMS = 4;
+    public static final int PAGE_STUDY = 0;
+    public static final int PAGE_PHOTOS = 1;
+    public static final int PAGE_QUOTES = 2;
+    public static final int PAGE_GAME = 3;
+    public static final int NUM_ITEMS = 4;
 
-	private static int CURRENT_VISIBLE_FRAGMENT = 0;
-	ViewPager awesomePager;
-	ActionBar actionBar;
-	InitialPageAdapter awesomeAdapter;
+    private static int CURRENT_VISIBLE_FRAGMENT = 0;
+    ViewPager awesomePager;
+    ActionBar actionBar;
+    InitialPageAdapter awesomeAdapter;
 
-	@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.initial_view_pager);
 
-		setupActionBar();
+        setupActionBar();
 
 //        findViewById(R.id.btn_study_guides).setOnClickListener(this);
 //        findViewById(R.id.btn_pictures).setOnClickListener(this);
 //        findViewById(R.id.btn_quotes).setOnClickListener(this);
 //        findViewById(R.id.btn_game).setOnClickListener(this);
 
-		awesomePager = (ViewPager) findViewById(R.id.initial_pager);
-		awesomeAdapter = new InitialPageAdapter(this.getSupportFragmentManager());
+        awesomePager = (ViewPager) findViewById(R.id.initial_pager);
+        awesomeAdapter = new InitialPageAdapter(this.getSupportFragmentManager());
 
-		awesomePager.setAdapter(awesomeAdapter);
-		awesomePager.setOnPageChangeListener(this);
-		awesomePager.setOffscreenPageLimit(100);
-		awesomeAdapter.notifyDataSetChanged();
+        awesomePager.setAdapter(awesomeAdapter);
+        awesomePager.setOnPageChangeListener(this);
+        awesomePager.setOffscreenPageLimit(100);
+        awesomeAdapter.notifyDataSetChanged();
+
+        getSupportFragmentManager().addOnBackStackChangedListener(getListener());
     }
 
-	private void setupActionBar() {
+    private void setupActionBar() {
 
-		actionBar = getSupportActionBar();
-		actionBar.removeAllTabs();
-		actionBar.setDisplayShowTitleEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar = getSupportActionBar();
+        actionBar.removeAllTabs();
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		ActionBar.Tab tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_agenda)
-				.setTag(PAGE_STUDY)
-				.setTabListener(this);
-		actionBar.addTab(tab);
+        ActionBar.Tab tab = actionBar.newTab()
+                .setIcon(android.R.drawable.ic_menu_agenda)
+                .setTag(PAGE_STUDY)
+                .setTabListener(this);
+        actionBar.addTab(tab);
 
-		tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_gallery)
-				.setTag(PAGE_PHOTOS)
-				.setTabListener(this);
-		actionBar.addTab(tab);
+        tab = actionBar.newTab()
+                .setIcon(android.R.drawable.ic_menu_gallery)
+                .setTag(PAGE_PHOTOS)
+                .setTabListener(this);
+        actionBar.addTab(tab);
 
-		tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_view)
-				.setTag(PAGE_QUOTES)
-				.setTabListener(this);
-		actionBar.addTab(tab);
+        tab = actionBar.newTab()
+                .setIcon(android.R.drawable.ic_menu_view)
+                .setTag(PAGE_QUOTES)
+                .setTabListener(this);
+        actionBar.addTab(tab);
 
-		tab = actionBar.newTab()
-				.setIcon(android.R.drawable.ic_menu_compass)
-				.setTag(PAGE_GAME)
-				.setTabListener(this);
-		actionBar.addTab(tab);
-	}
+        tab = actionBar.newTab()
+                .setIcon(android.R.drawable.ic_menu_compass)
+                .setTag(PAGE_GAME)
+                .setTabListener(this);
+        actionBar.addTab(tab);
+    }
 
     @Override
     public void onClick(View v) {
@@ -103,71 +106,89 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 //        }
     }
 
-	private void setCurrentItem(int position) {
-		if (awesomePager != null && awesomePager.getCurrentItem() != position) {
-			awesomePager.setCurrentItem(position);
-		}
-	}
+    private void setCurrentItem(int position) {
+        if (awesomePager != null && awesomePager.getCurrentItem() != position) {
+            awesomePager.setCurrentItem(position);
+        }
+    }
 
-	@Override
-	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-		setCurrentItem(tab.getPosition());
-	}
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        setCurrentItem(tab.getPosition());
+    }
 
-	@Override
-	public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-	}
+    }
 
-	@Override
-	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-	}
+    }
 
-	public static interface OnPageChanged {
-		void onEnteringPage(InitialPageActivity activity);
-		void onLeavingPage(InitialPageActivity activity);
-	}
+    public static interface OnPageChanged {
+        void onEnteringPage(InitialPageActivity activity);
 
-	@Override
-	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        void onLeavingPage(InitialPageActivity activity);
+    }
 
-	}
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-	@Override
-	public void onPageSelected(int position) {
-		actionBar.setSelectedNavigationItem(position);
+    }
 
-		Fragment oldFragment = (awesomeAdapter != null) ? awesomeAdapter.getFragmentById(CURRENT_VISIBLE_FRAGMENT) : null;
-		Fragment newFragment = (awesomeAdapter != null) ? awesomeAdapter.getFragmentById(position) : null;
+    @Override
+    public void onPageSelected(int position) {
+        actionBar.setSelectedNavigationItem(position);
 
-		// Notify the last fragment it is no longer visible.
-		if (oldFragment != null && oldFragment instanceof OnPageChanged) {
-			((OnPageChanged)oldFragment).onLeavingPage(this);
-		}
+        Fragment oldFragment = (awesomeAdapter != null) ? awesomeAdapter.getFragmentById(CURRENT_VISIBLE_FRAGMENT) : null;
+        Fragment newFragment = (awesomeAdapter != null) ? awesomeAdapter.getFragmentById(position) : null;
 
-		// Notify the new fragment it is now visible.
-		if (newFragment != null && newFragment instanceof OnPageChanged) {
-			((OnPageChanged)newFragment).onEnteringPage(this);
-		}
+        // Notify the last fragment it is no longer visible.
+        if (oldFragment != null && oldFragment instanceof OnPageChanged) {
+            ((OnPageChanged) oldFragment).onLeavingPage(this);
+        }
 
-		CURRENT_VISIBLE_FRAGMENT = position;
-	}
+        // Notify the new fragment it is now visible.
+        if (newFragment != null && newFragment instanceof OnPageChanged) {
+            ((OnPageChanged) newFragment).onEnteringPage(this);
+        }
 
-	@Override
-	public void onPageScrollStateChanged(int state) {
+        CURRENT_VISIBLE_FRAGMENT = position;
+    }
 
-	}
+    @Override
+    public void onPageScrollStateChanged(int state) {
 
-	@Override
-	public void onBackPressed() {
+    }
 
-		FlickrPhotoAlbumFragment frag = (FlickrPhotoAlbumFragment)getSupportFragmentManager().findFragmentByTag(InitialPageAdapter.makeFragmentName(InitialPageActivity.PAGE_PHOTOS));
+    @Override
+    public void onBackPressed() {
 
-		if (frag.albumRecyclerView.getAdapter() instanceof FlickrPhotoAlbumFragment.PhotoAdapter && awesomePager.getCurrentItem() == PAGE_PHOTOS) {
-			frag.albumRecyclerView.setAdapter(frag.albumAdapter);
-		} else {
-			super.onBackPressed();
-		}
-	}
+        FlickrPhotoAlbumFragment frag = (FlickrPhotoAlbumFragment) getSupportFragmentManager().findFragmentByTag(InitialPageAdapter.makeFragmentName(InitialPageActivity.PAGE_PHOTOS));
+
+        if (frag.albumRecyclerView.getAdapter() instanceof FlickrPhotoAlbumFragment.PhotoAdapter && awesomePager.getCurrentItem() == PAGE_PHOTOS) {
+            frag.albumRecyclerView.setAdapter(frag.albumAdapter);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private FragmentManager.OnBackStackChangedListener getListener() {
+        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener() {
+            public void onBackStackChanged() {
+                FragmentManager manager = getSupportFragmentManager();
+
+                if (manager != null) {
+                    StudyGuideSelectFragment currFrag = (StudyGuideSelectFragment) manager.findFragmentByTag(InitialPageAdapter.makeFragmentName(PAGE_STUDY));
+                    if (currFrag != null) {
+                        currFrag.swapButtonVisibility();
+                    }
+                }
+            }
+        };
+
+        return result;
+    }
 }

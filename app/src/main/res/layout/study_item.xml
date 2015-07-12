@@ -15,7 +15,6 @@
     <TextView
         android:id="@+id/tv_study_guide"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
