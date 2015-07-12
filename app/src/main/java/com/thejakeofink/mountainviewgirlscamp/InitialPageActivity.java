@@ -169,6 +169,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
         FlickrPhotoAlbumFragment frag = (FlickrPhotoAlbumFragment) getSupportFragmentManager().findFragmentByTag(InitialPageAdapter.makeFragmentName(InitialPageActivity.PAGE_PHOTOS));
 
         if (frag.albumRecyclerView.getAdapter() instanceof FlickrPhotoAlbumFragment.PhotoAdapter && awesomePager.getCurrentItem() == PAGE_PHOTOS) {
+            ((FlickrPhotoAlbumFragment.PhotoAdapter) frag.albumRecyclerView.getAdapter()).clear();
             frag.albumRecyclerView.setAdapter(frag.albumAdapter);
         } else {
             super.onBackPressed();

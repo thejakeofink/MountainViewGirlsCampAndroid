@@ -30,8 +30,8 @@ import java.util.Random;
 public class FlickrManager {
 
 
-	public static final int MESSAGE_UPDATE_FLICKR_ALBUMS = 0;
-	public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 1;
+    public static final int MESSAGE_UPDATE_FLICKR_ALBUMS = 0;
+    public static final int MESSAGE_UPDATE_FLICKR_PHOTOS = 1;
 
     public static final String TAG = "FlickrManager";
     public static String flickrAPIKey = "f3b34fa4324967a8e889ae3c815c84a9";
@@ -54,14 +54,13 @@ public class FlickrManager {
     }
 
 
-
-    public static class RetrievePhotosTask extends AsyncTask<Object, ArrayList<FlickrPhoto>, ArrayList<FlickrPhoto>> {
+    public static class RetrievePhotosTask extends AsyncTask<Object, FlickrPhoto, ArrayList<FlickrPhoto>> {
         private static final String TAG = "RetrievePhotosTask";
         private static boolean failFast = false;
         Handler handler;
         String photosURL;
         String albumTitle = "";
-		PhotoAlbum photoAlbum;
+        PhotoAlbum photoAlbum;
 
         public void destroy() {
             failFast = true;
@@ -73,73 +72,72 @@ public class FlickrManager {
             failFast = false;
         }
 
-		public RetrievePhotosTask(PhotoAlbum album, Handler handler) {
-			photoAlbum = album;
-			this.handler = handler;
-			failFast = false;
-		}
+        public RetrievePhotosTask(PhotoAlbum album, Handler handler) {
+            photoAlbum = album;
+            this.handler = handler;
+            failFast = false;
+        }
 
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(Object[] params) {
             ArrayList<FlickrPhoto> albumPhotos = new ArrayList<>();
             if (failFast) return albumPhotos;
-			JSONArray photos = null;
-			if (photoAlbum == null) {
-				ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
-				if (baos != null) {
-					String json = baos.toString();
+            JSONArray photos = null;
+            if (photoAlbum == null) {
+                ByteArrayOutputStream baos = URLConnector.readBytes(photosURL);
+                if (baos != null) {
+                    String json = baos.toString();
 
-					try {
-						JSONObject root = new JSONObject(json);
+                    try {
+                        JSONObject root = new JSONObject(json);
 
-						String status = root.getString("stat");
-						if (status.equals("ok")) {
+                        String status = root.getString("stat");
+                        if (status.equals("ok")) {
 
-							JSONObject photoset = root.getJSONObject("photoset");
+                            JSONObject photoset = root.getJSONObject("photoset");
 
-							albumTitle = photoset.getString("title");
+                            albumTitle = photoset.getString("title");
 
-							photos = photoset.getJSONArray("photo");
-						}
-					} catch (Exception e) {
-						Log.e(TAG, e.getMessage());
-					}
-				}
-			} else {
-				photos = photoAlbum.photoData;
-			}
-			if (photos != null) {
-				try {
-					for (int i = 0; i < photos.length() && !failFast; i++) {
-						JSONObject jsonPhoto = photos.getJSONObject(i);
-						FlickrPhoto flickrPhoto = new FlickrPhoto();
-						flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
-						flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
-						flickrPhoto.secret = jsonPhoto.getString("secret");
-						flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
-						flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
-						albumPhotos.add(flickrPhoto);
-						if (i < 5 || i % 5 == 0) {
-							publishProgress(albumPhotos);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+                            photos = photoset.getJSONArray("photo");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            } else {
+                photos = photoAlbum.photoData;
+            }
+            if (photos != null) {
+                try {
+                    for (int i = 0; i < photos.length() && !failFast; i++) {
+                        JSONObject jsonPhoto = photos.getJSONObject(i);
+                        FlickrPhoto flickrPhoto = new FlickrPhoto();
+                        flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+                        flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+                        flickrPhoto.secret = jsonPhoto.getString("secret");
+                        flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+                        flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+                        albumPhotos.add(flickrPhoto);
+
+                        publishProgress(flickrPhoto);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
             return albumPhotos;
         }
 
-        private void updateAlbumActivity(Handler handler, ArrayList<FlickrPhoto> flickrPhotos) {
+        private void updateAlbumActivity(Handler handler, FlickrPhoto flickrPhoto) {
             if (handler != null) {
-                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS, flickrPhotos);
+                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS, flickrPhoto);
                 handler.sendMessage(message);
             }
         }
 
         @Override
-        protected void onProgressUpdate(ArrayList<FlickrPhoto>... values) {
+        protected void onProgressUpdate(FlickrPhoto... values) {
             if (failFast) return;
             updateAlbumActivity(handler, values[0]);
         }
@@ -147,9 +145,12 @@ public class FlickrManager {
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> flickrPhotos) {
             if (failFast) return;
-            updateAlbumActivity(handler, flickrPhotos);
+//            updateAlbumActivity(handler, flickrPhotos);
+            //TODO: some sweet caching action...
         }
-    };
+    }
+
+    ;
 
     /*
     Do not call this method from the UI Thread!
@@ -206,7 +207,7 @@ public class FlickrManager {
                 }
             }
 
-            for(File file : files ) {
+            for (File file : files) {
                 Uri uri = Uri.fromFile(file);
                 uris.add(uri);
             }
@@ -214,22 +215,22 @@ public class FlickrManager {
             if (uris.size() > 1) {
                 intent.setAction(Intent.ACTION_SEND_MULTIPLE);
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-				sendShareIntent(context, intent);
-            } else if (uris.size() == 1){
+                sendShareIntent(context, intent);
+            } else if (uris.size() == 1) {
                 intent.setAction(Intent.ACTION_SEND);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-				sendShareIntent(context, intent);
+                sendShareIntent(context, intent);
             }
 
         }
 
-		private void sendShareIntent(Context context, Intent intent) {
-			intent.setType("image/*");
-			context.startActivity(Intent.createChooser(intent, "Select App to Share"));
-		}
+        private void sendShareIntent(Context context, Intent intent) {
+            intent.setType("image/*");
+            context.startActivity(Intent.createChooser(intent, "Select App to Share"));
+        }
     }
 
-    public static class SearchFlickrForSetsTask extends AsyncTask<Object, ArrayList<PhotoAlbum>, ArrayList<PhotoAlbum>> {
+    public static class SearchFlickrForSetsTask extends AsyncTask<Object, PhotoAlbum, ArrayList<PhotoAlbum>> {
         private static String TAG = "SearchFlickrForSetsTask";
         String listURL;
         Handler handler;
@@ -260,18 +261,18 @@ public class FlickrManager {
                             String albumID;
                             albumID = tempObj.getString("id");
                             albumTitle = tempObj.getJSONObject("title").getString("_content");
-							PhotoAlbum album = new PhotoAlbum();
-							album.id = albumID;
-							album.title = albumTitle;
-							
-							loadPhotoDataInAlbum(album);
+                            PhotoAlbum album = new PhotoAlbum();
+                            album.id = albumID;
+                            album.title = albumTitle;
 
-							FlickrPhoto preview = loadPhotoForAlbum(album);
-							album.img = loadImageForPhoto(preview, true);
+                            loadPhotoDataInAlbum(album);
+
+                            FlickrPhoto preview = loadPhotoForAlbum(album);
+                            album.img = loadImageForPhoto(preview, true);
 
                             albums.add(album);
 
-							publishProgress(albums);
+                            publishProgress(album);
                         }
                     }
                 } catch (Exception e) {
@@ -281,68 +282,71 @@ public class FlickrManager {
             return albums;
         }
 
-		private void loadPhotoDataInAlbum (PhotoAlbum album) {
-			ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(album.id));
-			if (baos != null) {
-				String json = baos.toString();
+        private void loadPhotoDataInAlbum(PhotoAlbum album) {
+            ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(album.id));
+            if (baos != null) {
+                String json = baos.toString();
 
-				try {
-					JSONObject root = new JSONObject(json);
+                try {
+                    JSONObject root = new JSONObject(json);
 
-					String status = root.getString("stat");
-					if (status.equals("ok")) {
+                    String status = root.getString("stat");
+                    if (status.equals("ok")) {
 
-						JSONObject photoset = root.getJSONObject("photoset");
+                        JSONObject photoset = root.getJSONObject("photoset");
 
-						JSONArray photos = photoset.getJSONArray("photo");
+                        JSONArray photos = photoset.getJSONArray("photo");
 
-						album.photoData = photos;
-					}
+                        album.photoData = photos;
+                    }
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-		private FlickrPhoto loadPhotoForAlbum(PhotoAlbum album) {
-			FlickrPhoto flickrPhoto = new FlickrPhoto();
+        private FlickrPhoto loadPhotoForAlbum(PhotoAlbum album) {
+            FlickrPhoto flickrPhoto = new FlickrPhoto();
 
-			JSONArray photos = album.photoData;
+            JSONArray photos = album.photoData;
 
-			Random rand = new Random(System.nanoTime());
+            Random rand = new Random(System.nanoTime());
 
-			int randomNum = rand.nextInt(photos.length());
-			try {
-				JSONObject jsonPhoto = photos.getJSONObject(randomNum);
-				flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
-				flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
-				flickrPhoto.secret = jsonPhoto.getString("secret");
-				flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
-				flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return flickrPhoto;
-		}
+            int randomNum = rand.nextInt(photos.length());
+            try {
+                JSONObject jsonPhoto = photos.getJSONObject(randomNum);
+                flickrPhoto.photoID = Long.parseLong(jsonPhoto.getString("id"));
+                flickrPhoto.farm = Integer.parseInt(jsonPhoto.getString("farm"));
+                flickrPhoto.secret = jsonPhoto.getString("secret");
+                flickrPhoto.server = Integer.parseInt(jsonPhoto.getString("server"));
+                flickrPhoto.thumbnail = loadImageForPhoto(flickrPhoto, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return flickrPhoto;
+        }
 
-        private void updateUI(Handler handler, ArrayList<PhotoAlbum> albums) {
+        private void updateUI(Handler handler, PhotoAlbum album) {
             if (handler != null) {
-                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_ALBUMS, albums);
+                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_ALBUMS, album);
                 handler.sendMessage(message);
             }
         }
 
         @Override
-        protected void onProgressUpdate(ArrayList<PhotoAlbum>... values) {
+        protected void onProgressUpdate(PhotoAlbum... values) {
             updateUI(handler, values[0]);
         }
 
         @Override
         protected void onPostExecute(ArrayList<PhotoAlbum> pairs) {
-            updateUI(handler, pairs);
+            //updateUI(handler, pairs);
+            //TODO: figure out some kind of good storage option...
         }
-    };
+    }
+
+    ;
 
     public static class GetFullPhoto extends AsyncTask<Object, Object, Object> {
 
@@ -350,7 +354,7 @@ public class FlickrManager {
         Handler handler;
         Context context;
 
-        public GetFullPhoto(FlickrPhoto photo, Handler handler, Context context){
+        public GetFullPhoto(FlickrPhoto photo, Handler handler, Context context) {
             this.flickrPhoto = photo;
             this.handler = handler;
             this.context = context;
@@ -385,7 +389,7 @@ public class FlickrManager {
         File file = PhotoManager.getOutputMediaFile(context, fname);
         try {
             FileOutputStream out = new FileOutputStream(file);
-            if(flickrPhoto.largeImage != null){
+            if (flickrPhoto.largeImage != null) {
                 flickrPhoto.largeImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
             }
             out.flush();
