@@ -4,19 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
 
 public class PhotoActivity extends Activity {
@@ -31,7 +30,7 @@ public class PhotoActivity extends Activity {
     private static final String TAG = "PhotoActivity";
 
     FlickrPhoto flickrPhoto;
-    ImageView photoView;
+    ImageViewTouch photoView;
     ShareActionProvider mShareActionProvider;
 
     public Handler mHandler = new Handler() {
@@ -52,7 +51,9 @@ public class PhotoActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        photoView = (ImageView) findViewById(R.id.imgv_flickr_photo);
+        photoView = (ImageViewTouch) findViewById(R.id.imgv_flickr_photo);
+
+        photoView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
 
         Bundle bundle;
 

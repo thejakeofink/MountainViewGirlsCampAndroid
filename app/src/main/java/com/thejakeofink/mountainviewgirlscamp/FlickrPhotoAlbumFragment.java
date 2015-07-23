@@ -10,17 +10,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -123,6 +119,7 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
         getPhotosTask = new FlickrManager.RetrievePhotosTask(mHandler);
         mHandler.removeMessages(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS);
     }
+
 
     class AlbumAdapter extends RecyclerView.Adapter<FlickrPhotoAlbumFragment.ImageViewHolder> {
 
@@ -229,8 +226,19 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
             if (albumOrImage instanceof PhotoAlbum) {
                 loadPhotosForPhotoset((PhotoAlbum) albumOrImage);
             } else if (albumOrImage instanceof FlickrPhoto) {
-                Toast.makeText(v.getContext(), "You clicked a photo!", Toast.LENGTH_SHORT).show();
+                openPhotoActivity((FlickrPhoto) albumOrImage);
             }
+        }
+
+        private void openPhotoActivity(FlickrPhoto photoForBundle) {
+            Intent photoIntent = new Intent(mItemView.getContext(), PhotoActivity.class);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_THUMBNAIL, photoForBundle.thumbnail);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_LARGE_IMAGE, photoForBundle.largeImage);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_FARM, photoForBundle.farm);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_ID, photoForBundle.photoID);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_SECRET, photoForBundle.secret);
+            photoIntent.putExtra(PhotoActivity.FLICKR_PHOTO_SERVER, photoForBundle.server);
+            mItemView.getContext().startActivity(photoIntent);
         }
 
         public void setOnClickListener() {
@@ -304,6 +312,10 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
             for (FlickrPhoto p : photos) {
                 albumPhotos.add(p);
             }
+        }
+
+        public FlickrPhoto getItem(int position) {
+            return albumPhotos.get(position);
         }
 
         @Override
