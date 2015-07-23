@@ -170,6 +170,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
 
         if (frag.albumRecyclerView.getAdapter() instanceof FlickrPhotoAlbumFragment.PhotoAdapter && awesomePager.getCurrentItem() == PAGE_PHOTOS) {
             ((FlickrPhotoAlbumFragment.PhotoAdapter) frag.albumRecyclerView.getAdapter()).clear();
+            frag.cancelPhotosTask();
             frag.albumRecyclerView.setAdapter(frag.albumAdapter);
         } else {
             super.onBackPressed();

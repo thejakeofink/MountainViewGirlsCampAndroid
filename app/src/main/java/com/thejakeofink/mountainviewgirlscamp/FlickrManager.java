@@ -64,12 +64,23 @@ public class FlickrManager {
 
         public void destroy() {
             failFast = true;
+            photoAlbum = null;
+            handler.removeMessages(MESSAGE_UPDATE_FLICKR_PHOTOS);
         }
 
         public RetrievePhotosTask(String setID, Handler handler) {
             photosURL = flickrURLForPhotoSet(setID);
             this.handler = handler;
             failFast = false;
+        }
+
+        public RetrievePhotosTask(Handler handler) {
+            this.handler = handler;
+            failFast = false;
+        }
+
+        public void addAlbum(PhotoAlbum album) {
+            photoAlbum = album;
         }
 
         public RetrievePhotosTask(PhotoAlbum album, Handler handler) {
@@ -107,7 +118,7 @@ public class FlickrManager {
             } else {
                 photos = photoAlbum.photoData;
             }
-            if (photos != null) {
+            if (photos != null && !failFast) {
                 try {
                     for (int i = 0; i < photos.length() && !failFast; i++) {
                         JSONObject jsonPhoto = photos.getJSONObject(i);
@@ -130,7 +141,7 @@ public class FlickrManager {
         }
 
         private void updateAlbumActivity(Handler handler, FlickrPhoto flickrPhoto) {
-            if (handler != null) {
+            if (handler != null && !failFast) {
                 Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS, flickrPhoto);
                 handler.sendMessage(message);
             }

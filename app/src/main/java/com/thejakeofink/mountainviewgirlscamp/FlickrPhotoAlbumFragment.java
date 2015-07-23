@@ -31,6 +31,11 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
     AlbumAdapter albumAdapter;
     PhotoAdapter photoAdapter;
 
+    static FlickrManager.RetrievePhotosTask getPhotosTask;
+    static FlickrManager.SearchFlickrForSetsTask getFlickrAlbumsTask;
+
+    static boolean cancelledPhotoTask = false;
+
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message message) {
@@ -47,20 +52,22 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
                     albumAdapter.notifyDataSetChanged();
                     break;
                 case FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS:
-                    FlickrPhoto thePhoto = (FlickrPhoto) message.obj;
+                    if (!cancelledPhotoTask) {
+                        FlickrPhoto thePhoto = (FlickrPhoto) message.obj;
 
-                    if (photoAdapter != null) {
-                        photoAdapter.addPhoto(thePhoto);
-                    } else {
-                        photoAdapter = new PhotoAdapter(thePhoto, FlickrPhotoAlbumFragment.this.getActivity());
-                        albumRecyclerView.setAdapter(photoAdapter);
+                        if (photoAdapter != null) {
+                            photoAdapter.addPhoto(thePhoto);
+                        } else {
+                            photoAdapter = new PhotoAdapter(thePhoto, FlickrPhotoAlbumFragment.this.getActivity());
+                            albumRecyclerView.setAdapter(photoAdapter);
+                        }
+
+                        if (albumRecyclerView.getAdapter() instanceof AlbumAdapter) {
+                            albumRecyclerView.setAdapter(photoAdapter);
+                        }
+
+                        photoAdapter.notifyDataSetChanged();
                     }
-
-                    if (albumRecyclerView.getAdapter() instanceof AlbumAdapter) {
-                        albumRecyclerView.setAdapter(photoAdapter);
-                    }
-
-                    photoAdapter.notifyDataSetChanged();
                     break;
             }
         }
@@ -84,6 +91,10 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
         glm.setOrientation(GridLayoutManager.VERTICAL);
         albumRecyclerView.setLayoutManager(glm);
 
+        if (getPhotosTask == null) {
+            getPhotosTask = new FlickrManager.RetrievePhotosTask(mHandler);
+        }
+
         //albumRecyclerView.setOnItemClickListener(this); //TODO: redo click for items
 
         loadAlbums();
@@ -92,7 +103,7 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
     }
 
     public void loadAlbums() {
-        FlickrManager.SearchFlickrForSetsTask getFlickrAlbumsTask = new FlickrManager.SearchFlickrForSetsTask(mHandler);
+        getFlickrAlbumsTask = new FlickrManager.SearchFlickrForSetsTask(mHandler);
         getFlickrAlbumsTask.execute();
     }
 
@@ -104,6 +115,13 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
     @Override
     public void onLeavingPage(InitialPageActivity activity) {
 
+    }
+
+    public void cancelPhotosTask() {
+        getPhotosTask.destroy();
+        cancelledPhotoTask = true;
+        getPhotosTask = new FlickrManager.RetrievePhotosTask(mHandler);
+        mHandler.removeMessages(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS);
     }
 
     class AlbumAdapter extends RecyclerView.Adapter<FlickrPhotoAlbumFragment.ImageViewHolder> {
@@ -222,7 +240,9 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
         }
 
         private void loadPhotosForPhotoset(PhotoAlbum album) {
-            new FlickrManager.RetrievePhotosTask(album, handler).execute();
+            getPhotosTask.addAlbum(album);
+            cancelledPhotoTask = false;
+            getPhotosTask.execute();
         }
     }
 
