@@ -1,18 +1,20 @@
 package com.thejakeofink.mountainviewgirlscamp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v8.renderscript.Allocation;
+import android.support.v8.renderscript.Element;
+import android.support.v8.renderscript.RenderScript;
+import android.support.v8.renderscript.ScriptIntrinsicBlur;
 import android.view.View;
 import android.widget.ImageView;
-
-import java.util.ArrayList;
 
 
 public class InitialPageActivity extends ActionBarActivity implements View.OnClickListener, ViewPager.OnPageChangeListener, ActionBar.TabListener {
@@ -27,6 +29,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
     ViewPager awesomePager;
     ActionBar actionBar;
     InitialPageAdapter awesomeAdapter;
+    ImageView background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +37,6 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
         setContentView(R.layout.initial_view_pager);
 
         setupActionBar();
-
-//        findViewById(R.id.btn_study_guides).setOnClickListener(this);
-//        findViewById(R.id.btn_pictures).setOnClickListener(this);
-//        findViewById(R.id.btn_quotes).setOnClickListener(this);
-//        findViewById(R.id.btn_game).setOnClickListener(this);
 
         awesomePager = (ViewPager) findViewById(R.id.initial_pager);
         awesomeAdapter = new InitialPageAdapter(this.getSupportFragmentManager());
@@ -49,6 +47,10 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
         awesomeAdapter.notifyDataSetChanged();
 
         getSupportFragmentManager().addOnBackStackChangedListener(getListener());
+
+        background = (ImageView) findViewById(R.id.temple_background);
+        Bitmap b = blurImage(BitmapFactory.decodeResource(getResources(), R.drawable.salt_lake_temple), 25);
+        background.setImageBitmap(b);
     }
 
     private void setupActionBar() {
@@ -192,6 +194,23 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
             }
         };
 
+        return result;
+    }
+
+    public Bitmap blurImage(Bitmap input, float radius) {
+        RenderScript rsScript = RenderScript.create(this);
+        Allocation alloc = Allocation.createFromBitmap(rsScript, input);
+
+        ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(rsScript, Element.U8_4(rsScript));
+        blur.setRadius(radius);
+        blur.setInput(alloc);
+
+        Bitmap result = Bitmap.createBitmap(input.getWidth(), input.getHeight(), input.getConfig());
+        Allocation outAlloc = Allocation.createFromBitmap(rsScript, result);
+        blur.forEach(outAlloc);
+        outAlloc.copyTo(result);
+
+        rsScript.destroy();
         return result;
     }
 }
