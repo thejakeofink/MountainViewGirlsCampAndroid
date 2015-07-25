@@ -172,6 +172,7 @@ public class InitialPageActivity extends ActionBarActivity implements View.OnCli
             ((FlickrPhotoAlbumFragment.PhotoAdapter) frag.albumRecyclerView.getAdapter()).clear();
             frag.cancelPhotosTask();
             frag.albumRecyclerView.setAdapter(frag.albumAdapter);
+            frag.loadAlbums();
         } else {
             super.onBackPressed();
         }

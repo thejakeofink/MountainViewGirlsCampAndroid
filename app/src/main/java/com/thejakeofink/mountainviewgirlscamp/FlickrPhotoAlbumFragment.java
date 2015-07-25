@@ -31,21 +31,24 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
     static FlickrManager.SearchFlickrForSetsTask getFlickrAlbumsTask;
 
     static boolean cancelledPhotoTask = false;
+    static boolean cancelledAlbumTask = false;
 
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message message) {
             switch (message.what) {
                 case FlickrManager.MESSAGE_UPDATE_FLICKR_ALBUMS:
-                    PhotoAlbum thealbum = (PhotoAlbum) message.obj;
-                    if (albumAdapter != null) {
-                        albumAdapter.addAlbum(thealbum);
-                    } else {
-                        albumAdapter = new AlbumAdapter(thealbum, FlickrPhotoAlbumFragment.this.getActivity());
-                        albumRecyclerView.setAdapter(albumAdapter);
-                    }
+                    if (!cancelledAlbumTask) {
+                        PhotoAlbum thealbum = (PhotoAlbum) message.obj;
+                        if (albumAdapter != null) {
+                            albumAdapter.addAlbum(thealbum);
+                        } else {
+                            albumAdapter = new AlbumAdapter(thealbum, FlickrPhotoAlbumFragment.this.getActivity());
+                            albumRecyclerView.setAdapter(albumAdapter);
+                        }
 
-                    albumAdapter.notifyDataSetChanged();
+                        albumAdapter.notifyDataSetChanged();
+                    }
                     break;
                 case FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS:
                     if (!cancelledPhotoTask) {
@@ -99,6 +102,10 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
     }
 
     public void loadAlbums() {
+        if (albumAdapter != null) {
+            albumAdapter.clear();
+        }
+        cancelledAlbumTask = false;
         getFlickrAlbumsTask = new FlickrManager.SearchFlickrForSetsTask(mHandler);
         getFlickrAlbumsTask.execute();
     }
@@ -113,11 +120,14 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
 
     }
 
-    public void cancelPhotosTask() {
+    public static void cancelPhotosTask() {
         getPhotosTask.destroy();
         cancelledPhotoTask = true;
-        getPhotosTask = new FlickrManager.RetrievePhotosTask(mHandler);
-        mHandler.removeMessages(FlickrManager.MESSAGE_UPDATE_FLICKR_PHOTOS);
+    }
+
+    public static void cancelAlbumsTask() {
+        getFlickrAlbumsTask.destroy();
+        cancelledAlbumTask = true;
     }
 
 
@@ -225,8 +235,10 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
         public void onClick(View v) {
             if (albumOrImage instanceof PhotoAlbum) {
                 loadPhotosForPhotoset((PhotoAlbum) albumOrImage);
+                cancelAlbumsTask();
             } else if (albumOrImage instanceof FlickrPhoto) {
                 openPhotoActivity((FlickrPhoto) albumOrImage);
+                cancelPhotosTask();
             }
         }
 
@@ -248,6 +260,7 @@ public class FlickrPhotoAlbumFragment extends Fragment implements InitialPageAct
         }
 
         private void loadPhotosForPhotoset(PhotoAlbum album) {
+            getPhotosTask = new FlickrManager.RetrievePhotosTask(handler);
             getPhotosTask.addAlbum(album);
             cancelledPhotoTask = false;
             getPhotosTask.execute();

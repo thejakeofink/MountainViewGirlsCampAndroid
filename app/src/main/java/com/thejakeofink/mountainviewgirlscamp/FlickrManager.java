@@ -245,14 +245,21 @@ public class FlickrManager {
         private static String TAG = "SearchFlickrForSetsTask";
         String listURL;
         Handler handler;
+        boolean failfast = false;
 
         public SearchFlickrForSetsTask(Handler handler) {
             this.listURL = flickrListURLForAccount();
             this.handler = handler;
         }
 
+        public void destroy() {
+            failfast = true;
+            handler.removeMessages(MESSAGE_UPDATE_FLICKR_ALBUMS);
+        }
+
         @Override
         protected ArrayList<PhotoAlbum> doInBackground(Object[] params) {
+            if (failfast) return null;
             ByteArrayOutputStream baos = URLConnector.readBytes(listURL);
             ArrayList<PhotoAlbum> albums = new ArrayList<>();
             if (baos != null) {
@@ -266,7 +273,7 @@ public class FlickrManager {
 
                         JSONArray photosets = rootContent.getJSONArray("photoset");
 
-                        for (int i = 0; i < photosets.length(); i++) {
+                        for (int i = 0; i < photosets.length() && !failfast; i++) {
                             JSONObject tempObj = photosets.getJSONObject(i);
                             String albumTitle;
                             String albumID;
@@ -294,6 +301,7 @@ public class FlickrManager {
         }
 
         private void loadPhotoDataInAlbum(PhotoAlbum album) {
+            if (failfast) return;
             ByteArrayOutputStream baos = URLConnector.readBytes(flickrURLForPhotoSet(album.id));
             if (baos != null) {
                 String json = baos.toString();
@@ -318,6 +326,7 @@ public class FlickrManager {
         }
 
         private FlickrPhoto loadPhotoForAlbum(PhotoAlbum album) {
+            if (failfast) return null;
             FlickrPhoto flickrPhoto = new FlickrPhoto();
 
             JSONArray photos = album.photoData;
@@ -339,8 +348,8 @@ public class FlickrManager {
         }
 
         private void updateUI(Handler handler, PhotoAlbum album) {
-            if (handler != null) {
-                Message message = handler.obtainMessage(FlickrManager.MESSAGE_UPDATE_FLICKR_ALBUMS, album);
+            if (handler != null && !failfast) {
+                Message message = handler.obtainMessage(MESSAGE_UPDATE_FLICKR_ALBUMS, album);
                 handler.sendMessage(message);
             }
         }
